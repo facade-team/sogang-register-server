@@ -1,5 +1,5 @@
 __pycache__/
 venv/
-migrations/
+#migrations/
 config.py
 test_config.py
