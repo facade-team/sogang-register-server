@@ -35,12 +35,12 @@ def save_new_user(data):
             'status': 'success',
             'message': '회원가입 되었습니다. '
         }
-        return generate_token(new_user)
+        return response_object, 201
     else:
         response_object = {
             'status': 'fail',
-            'message': '이미 가입된 회원입니다.',
-        }# 체를 JSON으로 포맷 하기 위해 jsonify 를 사용할 필요가 없습니다 . Flask-restplus가 자동으로 수행합니다.
+            'message': '이미 가입된 email 주소입니다.',
+        }
         return response_object, 409
 
 

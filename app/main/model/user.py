@@ -8,7 +8,8 @@ class User(db.Model):
     """ User Model for storing user related details """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=False, nullable=False)
+    major = db.Column(db.String(120), nullable=True)
     password_hash = db.Column(db.String(120))
     registered_on = db.Column(db.DateTime, nullable=False)
     
