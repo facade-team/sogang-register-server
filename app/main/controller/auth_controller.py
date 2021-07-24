@@ -7,6 +7,7 @@ from ..util.dto import AuthDto
 api = AuthDto.api
 user_auth = AuthDto.user_auth
 
+
 @api.route('/register')
 class UserRegister(Resource):
     """
