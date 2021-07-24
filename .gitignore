@@ -1,0 +1,5 @@
+__pycache__/
+venv/
+migrations/
+config.py
+test_config.py
