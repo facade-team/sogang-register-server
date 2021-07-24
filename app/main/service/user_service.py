@@ -1,4 +1,5 @@
 #user 모델에 관련된 쿼리문 작성 파일
+import uuid
 from main import db
 from main.model.user import User
 import datetime
@@ -25,6 +26,7 @@ def save_new_user(data):
     user = User.query.filter_by(email=data['email']).first()
     if not user:
         new_user = User(
+            public_id=str(uuid.uuid4()),
             email=data['email'],
             username=data['username'],
             password=data['password'],

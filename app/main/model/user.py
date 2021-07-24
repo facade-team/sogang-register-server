@@ -10,6 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=False, nullable=False)
     major = db.Column(db.String(120), nullable=True)
+    public_id = db.Column(db.String(100), unique=True)
     password_hash = db.Column(db.String(120))
     registered_on = db.Column(db.DateTime, nullable=False)
     

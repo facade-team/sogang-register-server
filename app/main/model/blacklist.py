@@ -1,4 +1,4 @@
-from app.main import db
+from .. import db
 import datetime
 
 class BlacklistToken(db.Model):

@@ -7,17 +7,6 @@ from ..util.dto import AuthDto
 api = AuthDto.api
 user_auth = AuthDto.user_auth
 
-
-@api.route('/register')
-class UserRegister(Resource):
-    """
-        User Register Resource
-    """
-    @api.doc('user register')
-    def post(self):
-        # get the post data
-        return "test"
-
 @api.route('/login')
 class UserLogin(Resource):
     """
