@@ -9,9 +9,10 @@ AWS EC2 우분투 서버에 REST API Server를 Docker를 이용해 배포했습�
 
 * 개발 시작 전에 어떤 branch에 있는지 체크하기
 * 중간중간에 꼭 commit 남기기
+* push 하기 전에는 pull 하기
 * 작업중인 위치가 container 내부인지, loacal인지 확인하기
 * model이 바뀔 경우 꼭 update 날리기
-* 잘 까먹느 명령어 checkout / add - commit - push
+* 잘 까먹는 명령어 checkout / add - commit - push
 
 # Run
 
