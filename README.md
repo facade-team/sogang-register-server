@@ -17,7 +17,7 @@ AWS EC2 우분투 서버에 REST API Server를 Docker를 이용해 배포했습�
 # Run
 
 ```bash
-docker run - dp 5000:5000 -v "$(PWD):/home" -e FLASK_ENV=development sonic886/sogang-register
+docker run -dp 5000:5000 -v "$(PWD):/home" -e FLASK_ENV=development sonic886/sogang-register
 ```
 
 ```
