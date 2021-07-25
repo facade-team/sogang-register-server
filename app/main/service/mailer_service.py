@@ -9,7 +9,7 @@ def sendmail(data):
     
     client = data['email']
 
-    msg = Message('Hello', sender = 'peter.hyunjae@gmail.com', recipients = ['peterhyunjae@naver.com'])
+    msg = Message('Hello', sender = 'peter.hyunjae@gmail.com', recipients = [client])
     msg.body = "Hello Flask message sent from Flask-Mail"
 
     try:
