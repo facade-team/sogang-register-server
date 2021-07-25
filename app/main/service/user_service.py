@@ -1,8 +1,10 @@
 #user 모델에 관련된 쿼리문 작성 파일
 import uuid
+import datetime
 from main import db
 from main.model.user import User
-import datetime
+
+from ..service.mailer_service import sendmail
 
 def generate_token(user):
     try:
@@ -52,12 +54,13 @@ def get_all_users():
 def get_a_user(id):
     return User.query.filter_by(id=id).first()
 
-def verify_a_user(data):
+def verify_a_user():
     # 인증 메일을 보내고 난 후 인증 코드를 작성하고 post 한 후 상황
+    sendmail()
     # data 와 실제 메일로 발송한 인증 코드 비교
     # 맞을 경우 맞다고 return, 틀릴 경우 틀리다고 return.
-    return '인증되었습니다!'
+    return '메일 보냄!'
 
 def save_changes(data):
     db.session.add(data)
-    db.session.commit() 
+    db.session.commit()

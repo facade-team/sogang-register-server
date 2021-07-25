@@ -22,14 +22,22 @@ class UserList(Resource):
         return save_new_user(data=data)
 
 @api.route('/confirmsecret')
-class UserList(Resource):
+class UserVerify(Resource):
     @api.expect(verify_model, validate=True)
-    @api.response(201, 'User successfully created.')
-    @api.doc('회원가입 후 email로 인증코드 인증버튼 누름')
+    @api.response(201, 'Verify email well done.')
+    @api.doc('email로 발송된 인증코드 인증')
     def post(self):
         """Verify a new User """
         data = request.json
-        return verify_a_user(data=data)
+        return verify_a_user()
+
+# @api.route('/mailer')
+# class UserList(Resource):
+#     @api.doc('회원가입 후 email로 인증코드 전송')
+#     @api.marshal_list_with(_user, envelope='data')
+#     def get(self):
+#         """List all registered users"""
+#         return get_all_users()
 
 # login, logout 가져와서 추가해야됨
 
