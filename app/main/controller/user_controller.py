@@ -28,8 +28,10 @@ class UserVerify(Resource):
     @api.doc('email로 발송된 인증코드 인증')
     def post(self):
         """Verify a new User """
+        # request는 email이랑 code로 일단 해놓음
         data = request.json
-        return verify_a_user()
+        # 넘기는 건 타겟 유저의 email 주소임
+        return verify_a_user(data)
 
 # @api.route('/mailer')
 # class UserList(Resource):

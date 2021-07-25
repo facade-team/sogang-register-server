@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from .config import config_by_name
+from .config import config_by_name, mailConfig
 
 # mail 관련 config, import
 from flask_mail import Mail
@@ -18,6 +18,13 @@ def create_app(config_name):
     flask_bcrypt.init_app(app)
 
     #mail 관련 config - main/config에 추가, mount
+    # mail config
+    app.config['MAIL_SERVER']='smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = mailConfig[0]
+    app.config['MAIL_PASSWORD'] = mailConfig[1]
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
     mail.init_app(app)
 
     return app 

@@ -54,12 +54,12 @@ def get_all_users():
 def get_a_user(id):
     return User.query.filter_by(id=id).first()
 
-def verify_a_user():
+def verify_a_user(data):
     # 인증 메일을 보내고 난 후 인증 코드를 작성하고 post 한 후 상황
-    sendmail()
+    sendmail(data = data)
     # data 와 실제 메일로 발송한 인증 코드 비교
     # 맞을 경우 맞다고 return, 틀릴 경우 틀리다고 return.
-    return '메일 보냄!'
+    return '메일 보냄!', 201
 
 def save_changes(data):
     db.session.add(data)
