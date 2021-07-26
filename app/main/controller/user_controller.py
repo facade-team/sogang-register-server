@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, verify_a_user, get_all_users, get_a_user
+from ..service.user_service import save_new_user, verify_a_user, canuse
 
 # user dto
 api = UserDto.api
@@ -12,14 +12,24 @@ _user = UserDto.user
 verify_model = UserDto.user_verify
 
 @api.route('/register')
-class UserList(Resource):
+class NewUser(Resource):
     @api.expect(_user, validate=True)
     @api.response(201, 'User successfully created.')
-    @api.doc('회원가입 form 작성 후 가입하기 누름')
+    @api.doc('회원가입 form 작성 후 가입하기 누르는 경우 / email만 입력하고 가입하기 누르는 경우로 분기')
     def post(self):
         """Creates a new User """
         data = request.json
         return save_new_user(data=data)
+
+@api.route('/canuse')
+class UserList(Resource):
+    @api.expect(_user, validate=True)
+    @api.response(201, 'Email can be used.')
+    @api.doc('가입할 수 있는 email인지 체크')
+    def post(self):
+        """Can I use this email? - body에 email만 담고 나머지 안 넣어도 돌아감 """
+        data = request.json
+        return canuse(email=data['email'])
 
 @api.route('/confirmsecret')
 class UserVerify(Resource):
