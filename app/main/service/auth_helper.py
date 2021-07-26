@@ -51,16 +51,12 @@ class Auth:
             auth_token = ''
         
         if auth_token:
-            resp = User.decode_auth_token(auth_token)
-            if not isinstance(resp, str):
-                # mark the token as blacklisted
-                return save_token(token=auth_token)
-            else:
-                response_object = {
-                    'status': 'fail',
-                    'message': resp
-                }
-                return response_object, 401
+            # decode
+            # decode 한 후 맞는 회원 정보인지 확인
+            # exp, iat로 만료 시간 확인
+            
+            # 접근 권한 있는지 확인
+            return 201
         else:
             response_object = {
                 'status': 'fail',
