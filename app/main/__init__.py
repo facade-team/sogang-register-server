@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 import pymysql
 import MySQLdb
 
-from .config import config_by_name, mailConfig
+from .config import host_name, username, password, database_name, config_by_name
 
 # mail 관련 config, import
 from flask_mail import Mail
@@ -14,10 +14,6 @@ flask_bcrypt = Bcrypt()
 mail = Mail()
 
 # test below
-host_name = "docker-mysql-test.cpabptw8fwxo.us-east-2.rds.amazonaws.com"
-username = "user"
-password = "password"
-database_name = "CRAWLING_TEST"
 con = MySQLdb.connect(host=host_name, user=username, password=password, database=database_name, charset='utf8')
 cur = con.cursor();
 
