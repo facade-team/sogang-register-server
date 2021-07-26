@@ -29,6 +29,7 @@ def create_app(config_name):
 
     #mail 관련 config - main/config에 추가, mount
     # mail config
+    '''
     app.config['MAIL_SERVER']='smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USERNAME'] = mailConfig[0]
@@ -36,6 +37,7 @@ def create_app(config_name):
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
     mail.init_app(app)
+    '''
 
     return app 
   
