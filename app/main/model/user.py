@@ -12,6 +12,9 @@ class User(db.Model):
     password_hash = db.Column(db.String(120))
     registered_on = db.Column(db.DateTime, nullable=False)
     
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True} 
+    
     @property
     def password(self):
       raise AttributeError('password: write-only field')
