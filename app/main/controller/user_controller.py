@@ -23,7 +23,7 @@ class NewUser(Resource):
 
 @api.route('/canuse')
 class UserList(Resource):
-    @api.expect(_user, validate=True)
+    @api.expect(_user, validate=False)
     @api.response(201, 'Email can be used.')
     @api.doc('가입할 수 있는 email인지 체크')
     def post(self):
