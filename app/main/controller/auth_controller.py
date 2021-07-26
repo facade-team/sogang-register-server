@@ -7,7 +7,6 @@ from ..util.dto import AuthDto
 api = AuthDto.api
 user_auth = AuthDto.user_auth
 
-
 @api.route('/login')
 class UserLogin(Resource):
     """

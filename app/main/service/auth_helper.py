@@ -29,7 +29,7 @@ class Auth:
             print(e)
             response_object = {
                 'status': 'fail',
-                'message': 'Try again'
+                'message': 'Try again',
             }
             return response_object, 500
 
