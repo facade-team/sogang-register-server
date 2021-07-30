@@ -4,16 +4,12 @@ from flask_bcrypt import Bcrypt
 import pymysql
 import MySQLdb
 
-from .config import config_by_name
+from .config import config_by_name, host_name, username, password, database_name
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 
-# test below
-host_name = "docker-mysql-test.cpabptw8fwxo.us-east-2.rds.amazonaws.com"
-username = "user"
-password = "password"
-database_name = "CRAWLING_TEST"
+# MySQLdb Connection Setting
 con = MySQLdb.connect(host=host_name, user=username, password=password, database=database_name, charset='utf8')
 cur = con.cursor();
 
@@ -23,7 +19,4 @@ def create_app(config_name):
     app.config.from_object(config_by_name[config_name])
     db.init_app(app)
     flask_bcrypt.init_app(app)
-
     return app 
-  
-  

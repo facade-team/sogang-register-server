@@ -15,8 +15,8 @@ class AuthDto:
         'password': fields.String(required=True, description='The user password '),
     })
     
-class SearchDto:
-    api = Namespace('search', description='db search related operations')
+class SubjectDto:
+    api = Namespace('subject', description='db search related operations')
     subject = api.model('subject', {
         'subject_id': fields.String(required=True, description='test'),
         '과목명': fields.String(required=True, description='test'),

@@ -1,14 +1,14 @@
 from flask import request
 from flask_restx import Resource
 
-from ..util.dto import SearchDto
-from ..service.search_service import get_all_data, get_professors_list, get_data_by_department, get_data_by_grade, get_data_by_credit, get_data_by_keyword
+from ..util.dto import SubjectDto
+from ..service.subject_service import get_all_data, get_professors_list, get_data_by_department, get_data_by_grade, get_data_by_credit, get_data_by_keyword
 
-api = SearchDto.api
-_subject = SearchDto.subject
-_grade = SearchDto.grade
-_credit = SearchDto.credit
-_keyword = SearchDto.keyword
+api = SubjectDto.api
+_subject = SubjectDto.subject
+_grade = SubjectDto.grade
+_credit = SubjectDto.credit
+_keyword = SubjectDto.keyword
 
 @api.route('/')
 class SearchTable(Resource):

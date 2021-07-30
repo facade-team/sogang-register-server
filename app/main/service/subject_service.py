@@ -1,7 +1,6 @@
 from main import db
 from main.model.subject import Subject
 from main import cur, con
-import datetime
 import pandas as pd
 columns = (
     'id',
