@@ -6,12 +6,11 @@ from ..service.privacy_service import search_email, search_password
 
 # user dto
 api = PrivacyDto.api
-email = PrivacyDto.email
-password = PrivacyDto.password
+privacy = PrivacyDto.privacy
 
 @api.route('/emailsearch')
 class EmailSearch(Resource):
-    @api.expect(email, validate=True)
+    @api.expect(privacy, validate=True)
     @api.response(201, 'Email successfully searched.')
     @api.doc('회원이 가입한 이메일을 찾으려고 하는 경우')
     def post(self):
@@ -21,7 +20,7 @@ class EmailSearch(Resource):
 
 @api.route('/passwordsearch')
 class PasswordSearch(Resource):
-    @api.expect(password, validate=True)
+    @api.expect(privacy, validate=True)
     @api.response(201, 'Password successfully searched.')
     @api.doc('회원이 가입한 비밀번호를 찾으려고 하는 경우')
     def post(self):

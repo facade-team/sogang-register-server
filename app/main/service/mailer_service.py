@@ -5,6 +5,10 @@ from main import mail
 def sendmail(data):
     # target email 주소
     client = data['email']
+    script = data['script']
+
+    print('email : ',client)
+    print('email script : ', script)
 
     msg = Message('Hello', sender = 'peter.hyunjae@gmail.com', recipients = [client])
 
@@ -13,6 +17,9 @@ def sendmail(data):
     # 인증
 
     msg.body = "Hello Flask message sent from Flask-Mail"
+    # msg.body = script
+
+    return 'hello'
 
     try:
         mail.send(msg)

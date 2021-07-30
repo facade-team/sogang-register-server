@@ -1,5 +1,6 @@
 from main import db
 from main.model.user import User
+import string, random
 
 from ..service.mailer_service import sendmail
 
@@ -33,37 +34,57 @@ def search_email(data):
             return response_object, 410
 
 def search_password(data):
-    try:
-        # fetch the user data
-        user = User.query.filter_by(email=data['email']).first()
-        if user and user.check_password(data['password']):
-            # 여기서부터 토큰 부여하는 로직
-            # jwt 형식으로 암호화해서 auth_token 생성
-            auth_token = user.encode_auth_token(user)
-            if auth_token:
-                response_object = {
-                    'status': 'success',
-                    'message': 'Successfully logged in.',
-                    'Authorization': auth_token
-                    #user.decode_auth_token(auth_token)
-                }
-                return response_object, 201
-            else:
-                response_object = {
-                'status': 'fail',
-                'message': 'token 생성 실패'
-                }
-                return response_object, 401
-        else:
-            response_object = {
-                'status': 'fail',
-                'message': 'email or password does not match.'
-            }
-            return response_object, 401
-    except Exception as e:
-        print(e)
+    # email, name 으로 존재하는지 찾고 메일 보내기
+    username = data['username']
+    useremail = data['email']
+
+    user = User.query.filter_by(email=useremail).first()
+    if not user:
         response_object = {
             'status': 'fail',
-            'message': 'Try again',
+            'message': '해당하는 email이 존재하지 않습니다.'
         }
-        return response_object, 500
+        return response_object, 409
+    else:
+        if username == user.username :
+            # email, name matched. 임시 password email로 전송.
+            temp = random_generator()
+            # db 수정
+            set_password(user,temp)
+
+            # 해당 회원의 email로 임시 비번 전송
+            mail_object = {
+                'email': useremail,
+                'script': temp
+            }
+            sendmail(mail_object)
+
+            response_object = {
+                'status': 'success',
+                'message': '해당하는 이메일로 임시 password를 전송했습니다.'
+            }
+            return response_object, 201
+        else:
+            # email 은 존재, 이름이 틀린 경우
+            response_object = {
+                'status': 'fail',
+                'message': 'email과 이름이 매칭되지 않습니다.'
+            }
+            return response_object, 410
+
+def set_password(user, pwd):
+    print('change password : ',user,pwd)
+
+    return 'password change'
+
+def change_password(data):
+    # token 검증
+    # 패스워드 변경 se
+
+    return 'password change'
+def dropout(data):
+    #
+    return 'dropout'
+
+def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))

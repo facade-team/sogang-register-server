@@ -8,6 +8,8 @@ class Auth:
             # fetch the user data
             user = User.query.filter_by(email=data['email']).first()
             if user and user.check_password(data['password']):
+                # 인증 여부 확인
+
                 # 여기서부터 토큰 부여하는 로직
                 # jwt 형식으로 암호화해서 auth_token 생성
                 auth_token = user.encode_auth_token(user)
