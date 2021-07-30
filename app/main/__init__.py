@@ -1,15 +1,20 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import pymysql
+import MySQLdb
 
-from .config import config_by_name, mailConfig
-
+from .config import config_by_name, mailConfig, host_name, username, password, database_name
 # mail 관련 config, import
 from flask_mail import Mail
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 mail = Mail()
+
+# MySQLdb Connection Setting
+con = MySQLdb.connect(host=host_name, user=username, password=password, database=database_name, charset='utf8')
+cur = con.cursor();
 
 def create_app(config_name): 
     app = Flask(__name__)

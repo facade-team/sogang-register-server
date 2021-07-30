@@ -21,6 +21,9 @@ jsonschema==3.2.0
 jwt==1.2.0
 Mako==1.1.4
 MarkupSafe==2.0.1
+mysqlclient==2.0.3
+numpy==1.21.1
+pandas==1.3.1
 pycparser==2.20
 PyJWT==2.1.0
 PyMySQL==1.0.2
