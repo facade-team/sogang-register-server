@@ -16,10 +16,10 @@ def sendmail(data):
     # 랜덤 인증 코드에 대해 세션 만료 시간 부여 (ex - 3분 안에 입력해야됨)
     # 인증
 
-    msg.body = "Hello Flask message sent from Flask-Mail"
-    # msg.body = script
+    #msg.body = "Hello Flask message sent from Flask-Mail"
+    msg.body = script
 
-    return 'hello'
+    # return 'hello'
 
     try:
         mail.send(msg)

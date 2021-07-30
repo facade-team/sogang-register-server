@@ -61,7 +61,7 @@ def get_all_data():
                 'status': 'success',
                 'message': '조회 성공입니다',
               }
-      cur.execute("SELECT {} FROM total_data_v2".format(query_cols))
+      cur.execute("SELECT {} FROM s21_2".format(query_cols))
       res = []
       for elem in cur:
           res.append(dict(zip(zip_cols, elem)))
@@ -74,7 +74,7 @@ def get_all_data():
     return response_object, 401
 
 def get_professors_list():
-    cur.execute("""SELECT 교수진 FROM total_data_v2""")
+    cur.execute("""SELECT 교수진 FROM s21_2""")
     res = []
     total_professor_list = []
     for elem in cur:
@@ -88,7 +88,7 @@ def get_professors_list():
     return res
   
 def get_data_by_department(department):
-  cur.execute("SELECT {} FROM total_data_v2 WHERE 학과 = '{}'".format(query_cols, department))
+  cur.execute("SELECT {} FROM s21_2 WHERE 학과 = '{}'".format(query_cols, department))
   res = []
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
@@ -111,7 +111,7 @@ def get_data_by_grade(data):
       for i in range(len(grades) - 1):
         grade += str(grades[i])+','
       grade += str(grades[len(grades) - 1])+'학년'
-  cur.execute("SELECT {} FROM total_data_v2 WHERE 수강대상 = '{}'".format(query_cols, grade))
+  cur.execute("SELECT {} FROM s21_2 WHERE 수강대상 = '{}'".format(query_cols, grade))
   res = []
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
@@ -128,7 +128,7 @@ def get_data_by_credit(data):
     credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])
   else:
     credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])+' OR 학점 = '+str(credits[2])
-  cur.execute("SELECT {} FROM total_data_v2 WHERE {}".format(query_cols, credit))
+  cur.execute("SELECT {} FROM s21_2 WHERE {}".format(query_cols, credit))
   res = []
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
@@ -139,7 +139,7 @@ def get_data_by_keyword(data):
   keyword = data['keyword']
   if not option in ['과목명', '과목번호', '교수진', '강의실']:
     return "error! option must be one of '과목명', '과목번호', '과목코드', '강의실'"
-  cur.execute("SELECT {} FROM total_data_v2 WHERE {} LIKE '%{}%'".format(query_cols, option, keyword))
+  cur.execute("SELECT {} FROM s21_2 WHERE {} LIKE '%{}%'".format(query_cols, option, keyword))
   res = []
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
