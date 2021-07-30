@@ -1,5 +1,4 @@
 from app.main.model.user import User
-from ..service.blacklist_service import save_token
 
 class Auth:
 
@@ -40,26 +39,29 @@ class Auth:
             }
             return response_object, 500
             
-
+    # token 유효성 판단. decode -> exp, iat 확인 -> true, false 리턴
     @staticmethod
-    def logout_user(data):
+    def middleware(data):
         # 로그인 안 한 상태에서 로그아웃 눌렀을 경우, auth_token은 ''
         if data:
-            print(data)
-            auth_token = data.split(" ")[1]
+            auth_token = data
         else:
             auth_token = ''
         
         if auth_token:
             # decode
+            token = User.decode_auth_token(auth_token)
             # decode 한 후 맞는 회원 정보인지 확인
-            # exp, iat로 만료 시간 확인
-            
-            # 접근 권한 있는지 확인
-            return 201
+            user = User.query.filter_by(email=token['email']).first()
+            if user:
+                response_object = {
+                        'status': 'success',
+                        'message': 'token 인증이 완료되었습니다.'
+                    }
+                return response_object, 201
         else:
             response_object = {
                 'status': 'fail',
-                'message': 'Provide a valid auth token.'
+                'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
             }
             return response_object, 403

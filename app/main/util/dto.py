@@ -19,6 +19,18 @@ class AuthDto:
         'email': fields.String(required=True, description='The email address'),
         'password': fields.String(required=True, description='The user password '),
     })
+
+class PrivacyDto:
+    api = Namespace('privacy', description='find email, find password')
+    email = api.model('email', {
+        'email': fields.String(required=True, description='user email address'),
+        'username': fields.String(required=True, description='user username'),
+    })
+    password = api.model('password', {
+        'email': fields.String(required=True, description='user email address'),
+        'password': fields.String(required=True, description='user password'),
+        'username': fields.String(required=True, description='user username'),
+    })
     
 class SearchDto:
     api = Namespace('search', description='db search related operations')
