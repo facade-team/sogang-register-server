@@ -41,12 +41,12 @@ def save_new_user(data):
         }
         return response_object,409
 
+def gen_secret_code(email):
+    client = email
+    
 
-def get_all_users():
-    return User.query.all()
 
-def get_a_user(id):
-    return User.query.filter_by(id=id).first()
+    return 'helel'  
 
 def verify_a_user(data):
     # 인증 메일 보내기 전 이메일 형식 확인
@@ -95,3 +95,6 @@ def can_use(email):
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
         return response_object, 409
+
+# def get_a_user(public_id):
+#     return User.query.filter_by(public_id=public_id).first()

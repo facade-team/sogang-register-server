@@ -12,6 +12,9 @@ class UserDto:
         'email': fields.String(required=True, description='user email address'),
         'script': fields.String(required=True, description='access code sent to user email'),
     })
+    user_email = api.model('user_email', {
+        'email': fields.String(required=True, description='user email address'),
+    })
     
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
