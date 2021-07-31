@@ -2,6 +2,7 @@ from main import db
 from main.model.subject import Subject
 from main import cur, con
 import pandas as pd
+from main.util.departments import departments, departments_text_list
 columns = (
     'id',
     '학년도',
@@ -145,6 +146,9 @@ def get_data_by_keyword(data):
       res.append(dict(zip(zip_cols, elem)))
   return res
 
+def set_department_query_string(department):
+  return "department LIKE '%{}%'".format(departments[department])
+
 def set_credit_query_string(credits):
   if len(credits) == 1:
     credit = '학점 = '+str(credits[0])
@@ -171,6 +175,11 @@ def set_grade_query_string(grades):
 
 def set_keyword_query_string(searchby, keyword):
   return "{} LIKE '%{}%'".format(searchby, keyword)
+
+def check_department_form(department):
+  if not department in departments_text_list:
+    return False
+  return True
 
 def check_credit_form(credits):
   if len(credits) == 0 or len(credits) > 3:
@@ -200,6 +209,11 @@ def get_data_by_option(data):
   
   if 'department' in data:
     department = data['department']
+    if not check_department_form(department):
+      department = None
+      return 'Wrong format!'
+    else:
+      department = set_department_query_string(department)
   if 'credit' in data:
     credit = data['credit']
     if not check_credit_form(credit):
