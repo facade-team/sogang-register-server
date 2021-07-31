@@ -87,12 +87,23 @@ def set_password(user, pwd):
         print(e)
         return False
 
-def change_password(data):
-    # token 검증
-    
-    # 패스워드 변경 se
+def change_password(user_email,data):
+    # old 패스워드 맞는지 확인
+    user = User.query.filter_by(email=user_email).first()
+    if user and user.check_password(data['old_password']):
+        set_password(user,data['new_password'])
+        response_object = {
+            'status': 'success',
+            'message': '새로운 비밀번호로 변경되었습니다.'
+        }
+        return response_object, 201
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': '이전 비밀번호가 일치하지 않습니다.'
+        }
+        return response_object, 401
 
-    return 'password change', 201
 def dropout(data):
     #
     return 'dropout'

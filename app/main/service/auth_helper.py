@@ -61,7 +61,7 @@ class Auth:
                         'message': 'token 인증이 완료되었습니다.',
                         'email': user.email
                     }
-                return response_object, 201
+                return response_object
         else:
             response_object = {
                 'status': 'fail',
