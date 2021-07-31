@@ -104,9 +104,32 @@ def change_password(user_email,data):
         }
         return response_object, 401
 
-def dropout(data):
-    #
-    return 'dropout'
+def dropout(user_email,data):
+    # name, password까지 체크 필요
+    user = User.query.filter_by(email=user_email).first()
+    if user and user.check_password(data['password']):
+        if user.username == data['username']:
+            # db 테이블에서 삭제
+            db.session.delete(user)
+            db.session.commit()
+            response_object = {
+                'status': 'success',
+                'message': '회원 탈퇴 되었습니다.'
+            }
+            return response_object, 201
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': '입력한 정보가 일치하지 않습니다. 다시 확인하세요.'
+            }
+            return response_object, 402
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': '비밀번호가 일치하지 않습니다.'
+        }
+        return response_object, 401
+    
 
 def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))

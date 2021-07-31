@@ -55,6 +55,7 @@ class UserDropOut(Resource):
         """Drop User's data"""
         # get auth token
         auth_header = request.headers.get('Authorization')
-        if Auth.middleware(data=auth_header):
+        res = Auth.middleware(data=auth_header)
+        if res['status'] == 'success':
             data = request.json
-            return dropout(data=data)
+            return dropout(res['email'],data = data)
