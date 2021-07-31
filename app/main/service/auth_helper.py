@@ -58,7 +58,8 @@ class Auth:
             if user:
                 response_object = {
                         'status': 'success',
-                        'message': 'token 인증이 완료되었습니다.'
+                        'message': 'token 인증이 완료되었습니다.',
+                        'email': user.email
                     }
                 return response_object, 201
         else:

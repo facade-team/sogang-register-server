@@ -50,20 +50,26 @@ def search_password(data):
             # email, name matched. 임시 password email로 전송.
             temp = random_generator()
             # db 수정
-            set_password(user,temp)
 
-            # 해당 회원의 email로 임시 비번 전송
-            mail_object = {
-                'email': useremail,
-                'script': temp
-            }
-            sendmail(mail_object)
+            if set_password(user,temp):
+                # 해당 회원의 email로 임시 비번 전송
+                mail_object = {
+                    'email': useremail,
+                    'script': temp
+                }
+                sendmail(mail_object)
 
-            response_object = {
-                'status': 'success',
-                'message': '해당하는 이메일로 임시 password를 전송했습니다.'
-            }
-            return response_object, 201
+                response_object = {
+                    'status': 'success',
+                    'message': '해당하는 이메일로 임시 password를 전송했습니다.'
+                }
+                return response_object, 201
+            else:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'db 접속 실패'
+                }
+                return response_object, 411
         else:
             # email 은 존재, 이름이 틀린 경우
             response_object = {
@@ -73,18 +79,27 @@ def search_password(data):
             return response_object, 410
 
 def set_password(user, pwd):
-    print('change password : ',user,pwd)
-
-    return 'password change'
+    try:
+        user.password = pwd
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 def change_password(data):
     # token 검증
+    
     # 패스워드 변경 se
 
-    return 'password change'
+    return 'password change', 201
 def dropout(data):
     #
     return 'dropout'
 
 def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+def save_changes(data):
+    db.session.add(data)
+    db.session.commit()

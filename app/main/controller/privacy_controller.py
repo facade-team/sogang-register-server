@@ -2,11 +2,15 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import PrivacyDto
-from ..service.privacy_service import search_email, search_password
+from ..service.privacy_service import search_email, search_password, change_password, dropout
+
+from app.main.service.auth_helper import Auth
 
 # user dto
 api = PrivacyDto.api
 privacy = PrivacyDto.privacy
+changepwd = PrivacyDto.changepwd
+drop = PrivacyDto.drop
 
 @api.route('/emailsearch')
 class EmailSearch(Resource):
@@ -18,12 +22,38 @@ class EmailSearch(Resource):
         data = request.json
         return search_email(data=data)
 
-@api.route('/passwordsearch')
+@api.route('/passwordreset')
 class PasswordSearch(Resource):
     @api.expect(privacy, validate=True)
-    @api.response(201, 'Password successfully searched.')
-    @api.doc('회원이 가입한 비밀번호를 찾으려고 하는 경우')
+    @api.response(201, 'Password successfully reset.')
+    @api.doc('회원이 가입한 비밀번호를 초기화 하는 경우')
     def post(self):
-        """Search User's Password"""
+        """Reset User's Password"""
         data = request.json
         return search_password(data=data)
+
+@api.route('/passwordchange')
+class PasswordChange(Resource):
+    @api.expect(changepwd, validate=True)
+    @api.response(201, 'Password successfully changed.')
+    @api.doc('회원이 가입한 비밀번호를 바꾸려고 하는 경우')
+    def post(self):
+        """Change User's Password"""
+        # get auth token
+        auth_header = request.headers.get('Authorization')
+        if Auth.middleware(data=auth_header):
+            data = request.json
+            return change_password(data=data)
+
+@api.route('/dropout')
+class UserDropOut(Resource):
+    @api.expect(drop, validate=True)
+    @api.response(201, 'User successfully dropped out.')
+    @api.doc('회원이 서비스를 탈퇴하는 경우')
+    def post(self):
+        """Drop User's data"""
+        # get auth token
+        auth_header = request.headers.get('Authorization')
+        if Auth.middleware(data=auth_header):
+            data = request.json
+            return dropout(data=data)
