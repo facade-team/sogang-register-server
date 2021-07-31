@@ -7,6 +7,7 @@ from main.model.user import User
 from ..service.mailer_service import sendmail
 # email 형식 틀린 것 걸러내기
 import re
+from ..service.privacy_service import random_generator
 
 # 회원가입한 회원 정보를 user모델(즉, user테이블에 넣기)
 def save_new_user(data):
@@ -43,7 +44,9 @@ def save_new_user(data):
 
 def gen_secret_code(email):
     client = email
-    
+    temp = random_generator(19)
+    print(temp)
+
 
 
     return 'helel'  

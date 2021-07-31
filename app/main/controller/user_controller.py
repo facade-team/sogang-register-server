@@ -5,7 +5,6 @@ from flask_restx import Resource
 
 from ..util.dto import UserDto
 from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code
-from ..service.privacy_service import random_generator
 
 # user dto
 api = UserDto.api
