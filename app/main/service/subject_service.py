@@ -144,3 +144,109 @@ def get_data_by_keyword(data):
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
   return res
+
+def set_credit_query_string(credits):
+  if len(credits) == 1:
+    credit = '학점 = '+str(credits[0])
+  elif len(credits) == 2:
+    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])
+  else:
+    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])+' OR 학점 = '+str(credits[2])
+  return credit
+
+def set_grade_query_string(grades):
+  # 한 개 학년일 경우
+  if len(grades) == 1:
+      grade = '수강대상 = "'+str(grades[0])+'학년"'
+  # 전학년일 경우    
+  elif len(grades) == 4:
+      grade = '수강대상 = "전학년"'
+  # 2개 ~ 3개 학년일 경우
+  else:
+      grade = '수강대상 = "'
+      for i in range(len(grades) - 1):
+        grade += str(grades[i])+','
+      grade += str(grades[len(grades) - 1])+'학년"'
+  return grade
+
+def set_keyword_query_string(searchby, keyword):
+  return "{} LIKE '%{}%'".format(searchby, keyword)
+
+def check_credit_form(credits):
+  if len(credits) == 0 or len(credits) > 3:
+    return False
+  return True
+
+def check_grade_form(grade):
+  if len(grade) == 0 or len(grade) > 4:
+    return False
+  return True
+
+def check_keyword_form(searchby, keyword):
+  if not searchby in ['과목명', '과목번호', '교수진', '강의실']:
+    return False
+  if searchby == None or keyword == None:
+    return False
+  return True
+
+def get_data_by_option(data):
+  year = data['year']
+  semester = data['semester']
+  department = None
+  credit = None
+  grade = None
+  searchby = None
+  keyword = None
+  
+  if 'department' in data:
+    department = data['department']
+  if 'credit' in data:
+    credit = data['credit']
+    if not check_credit_form(credit):
+      credit = None
+      return 'Wrong format!'
+    else:
+      credit = set_credit_query_string(credit)
+  if 'grade' in data:
+    grade = data['grade']
+    print(grade)
+    if not check_grade_form(grade):
+      grade = None
+      return 'Wrong format!'
+    else:
+      grade = set_grade_query_string(grade)
+  if 'searchby' in data and 'keyword' in data:
+    searchby = data['searchby']
+    keyword = data['keyword']
+    if not check_keyword_form(searchby, keyword):
+      searchby = None
+      keyword = None
+      return 'Wrong format!'
+    else:
+      searchby = set_keyword_query_string(searchby, keyword)
+  
+  payloads = [department, credit, grade, searchby]
+  tabale_name = 's{}_{}'.format(year, semester)
+  
+  # 옵션이 몇 개 인지 확인하여 query String 완성
+  optionNumber = 0
+  query = ' WHERE '
+  for option in payloads:
+    if option != None:
+        if optionNumber > 0:
+          optionNumber += 1
+          query += ' AND ({})'.format(option)
+        else:
+          optionNumber += 1
+          query += '({})'.format(option)
+  
+  if optionNumber == 0:
+    query = ''
+  
+  print(query)
+  
+  cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
+  res = []
+  for elem in cur:
+      res.append(dict(zip(zip_cols, elem)))
+  return res
