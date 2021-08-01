@@ -59,7 +59,7 @@ class SubjectDto:
     option = api.model('option', {
       'year': fields.String(required=True, description='학년도 (ex. 21, 20, 19, ...)'), # '21' 
       'semester': fields.String(required=True, description='학기 (ex. 1, s, 2, w)'), #'2'
-      'department': fields.String(required=False, description='소분류(학과) (ex. "컴퓨터공학전공")'), # '컴퓨터공학전공'
+      'department': fields.String(required=False, description='소분류 ID(학과 ID) (ex. "WD0132")'), # '컴퓨터공학전공'
       'credit': fields.List(fields.Integer(required=False, description='학점 (ex. [1], [1,2,3], [2,3], ...)')), # [0,1,2,3] # 0은 기타
       'grade': fields.List(fields.Integer(required=False, description='학년(수강대상) (ex. [1], [1,2], [1,2,3,4], ...)')), # [0,1,2,3,4] # 0은 기타
       'searchby': fields.String(required=False, description='검색옵션 (ex. "과목명", "과목번호", "교수진", "강의실" 중 하나!)'), # '과목명' # ['과목명', '과목번호', '교수진', '강의실'] 중 하나
