@@ -55,7 +55,8 @@ def search_password(data):
                 # 해당 회원의 email로 임시 비번 전송
                 mail_object = {
                     'email': useremail,
-                    'script': temp
+                    'script': temp,
+                    'purpose': 'password'
                 }
                 sendmail(mail_object)
 
