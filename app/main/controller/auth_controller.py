@@ -19,15 +19,3 @@ class UserLogin(Resource):
         # get the post data
         post_data = request.json
         return Auth.login_user(data=post_data)
-
-@api.route('/logout')
-class LogoutAPI(Resource):
-    """
-    Logout Resource
-    """
-    @api.doc('logout a user')
-    @api.response(201, 'logout success')
-    def post(self):
-        # get auth token
-        auth_header = request.headers.get('Authorization')
-        return Auth.middleware(data=auth_header)

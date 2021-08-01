@@ -4,12 +4,13 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, verify_a_user, can_use
+from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code
 
 # user dto
 api = UserDto.api
 _user = UserDto.user
 verify_model = UserDto.user_verify
+user_email = UserDto.user_email
 
 @api.route('/register')
 class NewUser(Resource):
@@ -23,13 +24,24 @@ class NewUser(Resource):
 
 @api.route('/canuse')
 class UserList(Resource):
-    @api.expect(_user, validate=False)
+    @api.expect(user_email, validate=True)
     @api.response(201, 'Email can be used.')
     @api.doc('가입할 수 있는 email인지 체크')
     def post(self):
         """Can I use this email? - body에 email만 담고 나머지 안 넣어도 돌아감 """
         data = request.json
         return can_use(email=data['email'])
+
+@api.route('/gensecret')
+class User(Resource):
+    @api.doc('generate secret code and send to user email')
+    @api.expect(user_email, validate=True)
+    @api.response(201, 'Email send')
+    @api.doc('해당 user의 email로 secret code 전송')
+    def post(self):
+        """email body에 넣어서 요청시 해당 email로 secret 코드 전송"""
+        data = request.json
+        return gen_secret_code(email=data['email'])
 
 @api.route('/confirmsecret')
 class UserVerify(Resource):

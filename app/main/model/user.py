@@ -12,6 +12,8 @@ class User(db.Model):
     public_id = db.Column(db.String(100), unique=True)
     password_hash = db.Column(db.String(120))
     registered_on = db.Column(db.DateTime, nullable=False)
+    verify_on = db.Column(db.Boolean, default = False, nullable = False)
+    verify_code = db.Column(db.String(20), nullable=True)
     
     __tablename__ = 'user'
     __table_args__ = {'extend_existing': True} 

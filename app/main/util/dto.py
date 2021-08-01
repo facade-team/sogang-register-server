@@ -12,6 +12,9 @@ class UserDto:
         'email': fields.String(required=True, description='user email address'),
         'script': fields.String(required=True, description='access code sent to user email'),
     })
+    user_email = api.model('user_email', {
+        'email': fields.String(required=True, description='user email address'),
+    })
     
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
@@ -26,6 +29,16 @@ class PrivacyDto:
         'email': fields.String(required=True, description='user email address'),
         'username': fields.String(required=True, description='user username'),
     })
+    changepwd = api.model('changepwd', {
+        'old_password': fields.String(required=True, description='old password'),
+        'new_password': fields.String(required=True, description='new password'),
+    })
+    drop = api.model('dropout', {
+        'email': fields.String(required=True, description='user email address'),
+        'username': fields.String(required=True, description='user username'),
+        'password': fields.String(required=True, description='password'),
+    })
+    
     
 class SubjectDto:
     api = Namespace('subject', description='db search related operations')

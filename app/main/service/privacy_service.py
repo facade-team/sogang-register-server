@@ -50,20 +50,27 @@ def search_password(data):
             # email, name matched. 임시 password email로 전송.
             temp = random_generator()
             # db 수정
-            set_password(user,temp)
 
-            # 해당 회원의 email로 임시 비번 전송
-            mail_object = {
-                'email': useremail,
-                'script': temp
-            }
-            sendmail(mail_object)
+            if set_password(user,temp):
+                # 해당 회원의 email로 임시 비번 전송
+                mail_object = {
+                    'email': useremail,
+                    'script': temp,
+                    'purpose': 'password'
+                }
+                sendmail(mail_object)
 
-            response_object = {
-                'status': 'success',
-                'message': '해당하는 이메일로 임시 password를 전송했습니다.'
-            }
-            return response_object, 201
+                response_object = {
+                    'status': 'success',
+                    'message': '해당하는 이메일로 임시 password를 전송했습니다.'
+                }
+                return response_object, 201
+            else:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'db 접속 실패'
+                }
+                return response_object, 411
         else:
             # email 은 존재, 이름이 틀린 경우
             response_object = {
@@ -73,18 +80,61 @@ def search_password(data):
             return response_object, 410
 
 def set_password(user, pwd):
-    print('change password : ',user,pwd)
+    try:
+        user.password = pwd
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
-    return 'password change'
+def change_password(user_email,data):
+    # old 패스워드 맞는지 확인
+    user = User.query.filter_by(email=user_email).first()
+    if user and user.check_password(data['old_password']):
+        set_password(user,data['new_password'])
+        response_object = {
+            'status': 'success',
+            'message': '새로운 비밀번호로 변경되었습니다.'
+        }
+        return response_object, 201
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': '이전 비밀번호가 일치하지 않습니다.'
+        }
+        return response_object, 401
 
-def change_password(data):
-    # token 검증
-    # 패스워드 변경 se
-
-    return 'password change'
-def dropout(data):
-    #
-    return 'dropout'
+def dropout(user_email,data):
+    # name, password까지 체크 필요
+    user = User.query.filter_by(email=user_email).first()
+    if user and user.check_password(data['password']):
+        if user.username == data['username']:
+            # db 테이블에서 삭제
+            db.session.delete(user)
+            db.session.commit()
+            response_object = {
+                'status': 'success',
+                'message': '회원 탈퇴 되었습니다.'
+            }
+            return response_object, 201
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': '입력한 정보가 일치하지 않습니다. 다시 확인하세요.'
+            }
+            return response_object, 402
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': '비밀번호가 일치하지 않습니다.'
+        }
+        return response_object, 401
+    
 
 def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+def save_changes(data):
+    db.session.add(data)
+    db.session.commit()
