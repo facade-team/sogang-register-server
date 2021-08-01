@@ -14,7 +14,11 @@ class UserLogin(Resource):
     """
     @api.doc('user login')
     @api.expect(user_auth, validate=True)
-    @api.response(201, 'login success')
+    @api.response(201, 'Successfully logged in.')
+    @api.response(401, 'token 생성 실패')
+    @api.response(402, '이메일 인증을 먼저 해 주세요')
+    @api.response(403, 'email or password does not match.')
+    @api.response(404, 'Try again - DB 연결 Error')
     def post(self):
         # get the post data
         post_data = request.json

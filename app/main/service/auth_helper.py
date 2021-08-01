@@ -30,7 +30,7 @@ class Auth:
                 else:
                     response_object = {
                     'status': 'fail',
-                    'message': ''
+                    'message': '이메일 인증을 먼저 해 주세요'
                     }
                     return response_object, 402
             else:

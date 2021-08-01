@@ -16,7 +16,7 @@ def search_email(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
-        return response_object, 409
+        return response_object, 402
     else:
         if username == user.username : 
             # email, name matched.
@@ -31,7 +31,7 @@ def search_email(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
-            return response_object, 410
+            return response_object, 401
 
 def search_password(data):
     # email, name 으로 존재하는지 찾고 메일 보내기
@@ -44,7 +44,7 @@ def search_password(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
-        return response_object, 409
+        return response_object, 402
     else:
         if username == user.username :
             # email, name matched. 임시 password email로 전송.
@@ -77,7 +77,7 @@ def search_password(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
-            return response_object, 410
+            return response_object, 401
 
 def set_password(user, pwd):
     try:
@@ -121,7 +121,7 @@ def dropout(user_email,data):
         else:
             response_object = {
                 'status': 'fail',
-                'message': '입력한 정보가 일치하지 않습니다. 다시 확인하세요.'
+                'message': '입력한 form에서 이름이 일치하지 않은 경우'
             }
             return response_object, 402
     else:
