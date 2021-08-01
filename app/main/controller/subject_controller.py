@@ -28,8 +28,8 @@ class Department(Resource):
   @api.doc('개설교과목 학부 정보 조회')
   def get(self):
     """개설교과목 학부 정보 조회"""
-    semester = request.args.get('semester', None)
     year = request.args.get('year', None)
+    semester = request.args.get('semester', None)
     return get_departments(year, semester)
 '''
 @api.route('/grade')
