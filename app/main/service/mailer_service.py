@@ -6,6 +6,7 @@ def sendmail(data):
     # target email 주소
     client = data['email']
     script = data['script']
+    purpose = data['purpose']
 
     print('email : ',client)
     print('email script : ', script)
@@ -17,7 +18,11 @@ def sendmail(data):
     # 인증
 
     #msg.body = "Hello Flask message sent from Flask-Mail"
-    msg.body = script
+    
+    if purpose == 'register':
+        msg.body = '이메일 인증 코드입니다. 인증란에 입력해 주세요. [ ' + script + ' ]'
+    else:
+        msg.body = '임시비밀번호 입니다. 로그인 후 비밀번호를 변경해 주세요. [ ' + script + ' ]'
 
     # return 'hello'
 
