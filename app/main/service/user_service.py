@@ -36,13 +36,13 @@ def save_new_user(data):
                 'status': 'fail',
                 'message': '이미 가입된 email 주소입니다.',
             }
-            return response_object, 409
+            return response_object, 401
     else:
         response_object = {
             'status': 'fail',
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
-        return response_object,409
+        return response_object,402
 
 def gen_secret_code(email):
     temp = random_generator(6)
@@ -128,13 +128,13 @@ def can_use(email):
                     'status': 'fail',
                     'message': '중복된 email 입니다.'
                 }
-            return response_object, 409
+            return response_object, 401
     else:
         response_object = {
             'status': 'fail',
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
-        return response_object, 409
+        return response_object, 402
 
 # def get_a_user(public_id):
 #     return User.query.filter_by(public_id=public_id).first()
