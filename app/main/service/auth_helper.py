@@ -17,7 +17,12 @@ class Auth:
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'Authorization': auth_token
+                            'data': {
+                                'email' : user.email,
+                                'username' : user.username,
+                                'major' : ['컴퓨터공학과', '경제학과'],
+                                'Authorization': auth_token
+                            }
                             #user.decode_auth_token(auth_token)
                         }
                         return response_object, 201
