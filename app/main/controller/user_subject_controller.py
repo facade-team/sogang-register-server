@@ -23,7 +23,7 @@ class NewUser(Resource):
 
 @api.route('/favorites/add')
 class NewUser(Resource):
-    @api.expect(JoinTable, validate=True)
+    @api.expect(subject_id, validate=True)
     @api.response(201, '즐겨찾기에 해당 과목이 추가되었습니다.')
     @api.doc('토큰 인증 후 즐겨찾기 테이블에 해당 과목 추가')
     def post(self):
@@ -32,11 +32,12 @@ class NewUser(Resource):
         auth_header = request.headers.get('Authorization')
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
-            return add_subjects(res['email'])
+            data = request.json
+            return add_subjects(res['email'],data)
 
 @api.route('/favorites/del')
 class NewUser(Resource):
-    @api.expect(JoinTable, validate=True)
+    @api.expect(subject_id, validate=True)
     @api.response(201, '회원가입 되었습니다.')
     @api.doc('토큰 인증 후 즐겨찾기 테이블에 해당 과목 삭제')
     def post(self):
@@ -46,5 +47,5 @@ class NewUser(Resource):
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
             data = request.json
-            return del_subjects(res['email'])
+            return del_subjects(res['email'],data)
 
