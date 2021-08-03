@@ -6,6 +6,7 @@ class UserDto:
         'email': fields.String(required=True, description='user email address'),
         'username': fields.String(required=True, description='user username'),
         'password': fields.String(required=True, description='user password'),
+        'major':  fields.List(fields.String(description='user major'),required=True)
     })
     # 새로운 user의 email 인증과 관련해서 request를 email, access code 두 개로 하려고 하는데 괜찮겠지?
     user_verify = api.model('user_verify', {
