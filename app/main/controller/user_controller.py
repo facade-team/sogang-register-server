@@ -4,13 +4,27 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code
+from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code, get_user
+
+from app.main.service.auth_helper import Auth
 
 # user dto
 api = UserDto.api
 _user = UserDto.user
 verify_model = UserDto.user_verify
 user_email = UserDto.user_email
+
+@api.route('')
+class Users(Resource):
+    @api.doc('user 정보 조회')
+    def get(self):
+        '''user 정보 조회'''
+        auth_header = request.headers.get('Authorization')
+        res = Auth.middleware(data=auth_header)
+        if res['status'] == 'success':
+            return get_user(res['email'])
+        else:
+            return '유효하지 않은 토큰입니다.'
 
 @api.route('/register')
 class NewUser(Resource):

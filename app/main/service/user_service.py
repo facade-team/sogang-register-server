@@ -138,3 +138,24 @@ def can_use(email):
 
 # def get_a_user(public_id):
 #     return User.query.filter_by(public_id=public_id).first()
+
+def get_user(email):
+  user = User.query.filter_by(email=email).first()
+  if user:
+        response_object = {
+            'status': 'success',
+            'message': '회원 조회에 성공했습니다.',
+            'data': {
+                'email' : user.email,
+                'username' : user.username,
+                'major' : ['컴퓨터공학과', '경제학과']
+            }
+        }
+        return response_object, 201
+  else:
+      response_object = {
+          'status': 'fail',
+          'message': '해당 회원이 없습니다.'
+      }
+      return response_object, 401
+  
