@@ -30,5 +30,5 @@ def sendmail(data):
         mail.send(msg)
         return "성공"
     except Exception as e:
-        print(e)
+        print(str(e))
         return "실패"

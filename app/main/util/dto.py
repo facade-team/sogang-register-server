@@ -38,8 +38,13 @@ class PrivacyDto:
         'username': fields.String(required=True, description='user username'),
         'password': fields.String(required=True, description='password'),
     })
-    
-    
+
+class JoinTable:
+    api = Namespace('jointable', description='Favorites, attended subjects in here')
+    subject = api.model('sub_id', {
+        'sub_id': fields.String(required=True, description='add and delete subject id in join table'),
+    })
+
 class SubjectDto:
     api = Namespace('subject', description='db search related operations')
     subject = api.model('subject', {
