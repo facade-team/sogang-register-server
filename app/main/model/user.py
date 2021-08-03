@@ -46,7 +46,7 @@ class User(db.Model):
                 algorithm
             )
         except Exception as e:
-            return e
+            return str(e)
 
     @staticmethod
     def decode_auth_token(auth_token):
