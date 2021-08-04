@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import SubjectDto
-from ..service.subject_service import get_all_data, get_professors_list, get_data_by_department, get_data_by_grade, get_data_by_credit, get_data_by_keyword, get_data_by_option, get_departments
+from ..service.subject_service import get_all_data, get_data_by_option, get_departments
 
 api = SubjectDto.api
 _subject = SubjectDto.subject
@@ -14,7 +14,7 @@ _option = SubjectDto.option
 @api.route('')
 class SearchTable(Resource):
   @api.doc('2021학년도 2학기 학부 개설교과목 정보를 전부 조회')
-  @api.marshal_list_with(_subject, envelope='data')
+  #@api.marshal_list_with(_subject, envelope='data')
   def get(self):
     """2021학년도 2학기 학부 개설교과목 정보를 전부 조회"""
     return get_all_data()

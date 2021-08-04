@@ -1,5 +1,5 @@
 from app.main.model.user import User
-
+from app.main import db
 class Auth:
 
     @staticmethod
@@ -25,24 +25,28 @@ class Auth:
                             }
                             #user.decode_auth_token(auth_token)
                         }
+                        db.session.close()
                         return response_object, 201
                     else:
                         response_object = {
                         'status': 'fail',
                         'message': 'token 생성 실패'
                         }
+                        db.session.close()
                         return response_object, 401
                 else:
                     response_object = {
                     'status': 'fail',
                     'message': '이메일 인증을 먼저 해 주세요'
                     }
+                    db.session.close()
                     return response_object, 402
             else:
                 response_object = {
                     'status': 'fail',
                     'message': 'email or password does not match.'
                 }
+                db.session.close()
                 return response_object, 403
         except Exception as e:
             print(e)
@@ -50,6 +54,7 @@ class Auth:
                 'status': 'fail',
                 'message': 'Try again',
             }
+            db.session.close()
             return response_object, 404
             
     # token 유효성 판단. decode -> exp, iat 확인 -> true, false 리턴
@@ -72,10 +77,12 @@ class Auth:
                         'message': 'token 인증이 완료되었습니다.',
                         'email': user.email
                     }
+                db.session.close()
                 return response_object
         else:
             response_object = {
                 'status': 'fail',
                 'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
             }
+            db.session.close()
             return response_object, 403
