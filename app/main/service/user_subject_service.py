@@ -1,6 +1,4 @@
 
-from warnings import resetwarnings
-from sqlalchemy.sql.elements import Null
 from main import db
 from main.model.user_subject import UserSubject
 from main.model.user import User
@@ -18,13 +16,12 @@ def add_subjects(user_email, data):
     user = User.query.filter_by(email=user_email).first()
     if user:
         # db에 추가
-        subjectlist = data['sub_id']
-        print(len(subjectlist))
-        # new_favorite = UserSubject(
-        #     email = data['email'],
-        #     subject_id = data['subject_id']
-        # )
-        # save_changes(new_favorite)
+        subjectlist = ' '.join(data['sub_id'])
+        new_favorite = UserSubject(
+            email = user_email,
+            subject_id = subjectlist
+        )
+        save_changes(new_favorite)
         response_object = {
             'status': 'success',
             'message': '즐겨찾기에 추가되었습니다.'
