@@ -12,7 +12,6 @@ subject_id = JoinTable.subject
 @api.route('/favorites')
 class NewUser(Resource):
     @api.doc('list of user favorite subjects')
-    @api.marshal_list_with(subject_id, envelope='data')
     def get(self):
         # get auth token
         auth_header = request.headers.get('Authorization')

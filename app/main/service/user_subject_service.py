@@ -1,19 +1,49 @@
 
+from re import split, sub
 from main import db
 from main.model.user_subject import UserSubject
 from main.model.user import User
+from main import cur
 
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, 시작시간, 종료시간, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어'
+zip_cols = (
+  'subject_id',
+  '과목명',
+  '학과',
+  '강의계획서',
+  '학점',
+  '요일',
+  '시작시간',
+  '종료시간',
+  '강의실',
+  '교수진',
+  '수강대상',
+  '과목설명',
+  '비고',
+  '대면여부',
+  '강의언어'
+)
 def get_subjects(user_email):
     # Join table에서 해당 유저의 모든 즐겨찾기 과목 검색
-    user = UserSubject.query.filter_by(email=user_email).first()
+    user = UserSubject.query.filter_by(email=user_email).all()
+    #user = db.session.query(UserSubject.subject_id).filter(UserSubject.email == user_email).all()
     if user:
         # 배열로 먼저 가져온 다음 순차적으로 하나씩 뽑아서 response 완성하자
-        fb_list = user.subject_id.split(' ')
-        print(fb_list)
-        
+        res = []
+        for i in user:
+            print(i.subject_id)
+            # 어떤 table에서 뽑을 건지 결정
+            splitdata = i.subject_id.split('-')
+            target_table = 's' + splitdata[0] + '_' + splitdata[1]
+            # 테이블에서 해당 id 조회
+            cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
+            # 리턴 오브젝트에 추가 후 한번에 리턴
+            for elem in cur:
+                res.append(dict(zip(zip_cols, elem)))        
         response_object = {
             'status': 'success',
-            'message': '해당 유저의 즐겨찾기 목록 조회 완료'
+            'message': '해당 유저의 즐겨찾기 목록 조회 완료',
+            'data':res
         }
         return response_object, 201
     else:
@@ -33,18 +63,13 @@ def add_subjects(user_email, data):
     # user 테이블에만 email이 존재한다 - add
     # 둘 다 없다 - error
     if user:
-        subjectlist = ' '.join(data['sub_id'])
-        if notfirst:
-            # update
-            #count_favorites(notfirst.subject_id)
-            notfirst.subject_id = subjectlist
-            db.session.commit()
-            db.session.close()
-        else:
-            #add
+        subjectlist = data['sub_id']
+        del_subjects(user_email)
+        print(subjectlist)
+        for i in subjectlist:
             new_favorite = UserSubject(
                 email = user_email,
-                subject_id = subjectlist
+                subject_id = i
             )
             save_changes(new_favorite)
         response_object = {
