@@ -108,6 +108,7 @@ def verify_a_user(data):
 def save_changes(data):
     db.session.add(data)
     db.session.commit()
+    db.session.close()
 
 # email 형식 체크
 def checkmail(email):

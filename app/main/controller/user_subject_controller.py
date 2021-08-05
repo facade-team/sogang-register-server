@@ -24,7 +24,7 @@ class NewUser(Resource):
 @api.route('/favorites/add')
 class NewUser(Resource):
     @api.expect(subject_id, validate=True)
-    @api.response(201, '즐겨찾기에 해당 과목이 추가되었습니다.')
+    @api.response(201, '즐겨찾기에 추가, 혹은 업데이트 되었습니다.')
     @api.doc('토큰 인증 후 즐겨찾기 테이블에 해당 과목 추가')
     def post(self):
         """Add new favorite subject"""
@@ -37,15 +37,13 @@ class NewUser(Resource):
 
 @api.route('/favorites/del')
 class NewUser(Resource):
-    @api.expect(subject_id, validate=True)
-    @api.response(201, '회원가입 되었습니다.')
-    @api.doc('토큰 인증 후 즐겨찾기 테이블에 해당 과목 삭제')
-    def post(self):
-        """Delete favorite subject from table"""
+    @api.response(201, '즐겨찾기에 등록된 모든 과목을 삭제했습니다.')
+    @api.doc('해당 유저의 모든 즐겨찾기 삭제')
+    def get(self):
+        """Delete all favorite subject from table"""
         # get auth token
         auth_header = request.headers.get('Authorization')
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
-            data = request.json
-            return del_subjects(res['email'],data)
+            return del_subjects(res['email'])
 
