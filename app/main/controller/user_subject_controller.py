@@ -20,7 +20,7 @@ class NewUser(Resource):
             return get_subjects(res['email'])
 
 
-@api.route('/favorites/add')
+@api.route('/favorites/update')
 class NewUser(Resource):
     @api.expect(subject_id, validate=True)
     @api.response(201, '즐겨찾기에 추가, 혹은 업데이트 되었습니다.')

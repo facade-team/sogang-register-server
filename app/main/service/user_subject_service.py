@@ -57,15 +57,10 @@ def add_subjects(user_email, data):
     # Join table에 해당 유저의 id + subject_id로 추가
     # 존재하는 유저인지 검증
     user = User.query.filter_by(email=user_email).first()
-    notfirst = UserSubject.query.filter_by(email=user_email).first()
-    # db에 추가 - 처음 등록하는경우 or update하는 경우로 분기
-    # 두 테이블에 모두 email이 존재한다 - update
-    # user 테이블에만 email이 존재한다 - add
-    # 둘 다 없다 - error
+    
     if user:
         subjectlist = data['sub_id']
         del_subjects(user_email)
-        print(subjectlist)
         for i in subjectlist:
             new_favorite = UserSubject(
                 email = user_email,
@@ -86,11 +81,13 @@ def add_subjects(user_email, data):
 
 def del_subjects(user_email):
     # Join table에서 해당 유저의 해당 즐겨찾기 과목 전체 삭제
-    user = UserSubject.query.filter_by(email=user_email).first()
+    user = UserSubject.query.filter_by(email=user_email).all()
     if user:
-        db.session.delete(user)
-        db.session.commit()
-        db.session.close()
+        # 몇 번 찾아서 지울건지 체크
+        for i in user:
+            db.session.delete(i)
+            db.session.commit()
+            db.session.close()
         response_object = {
             'status': 'success',
             'message': '즐겨찾기에 등록된 모든 과목을 삭제했습니다.'
