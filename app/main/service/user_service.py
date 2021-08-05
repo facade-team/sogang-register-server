@@ -18,12 +18,15 @@ def save_new_user(data):
         user = User.query.filter_by(email=data['email']).first()
         # db에 중복되는 email 주소 없음.
         if not user:
+            majorparse = ' '.join(data['major'])
+            print(majorparse)
             new_user = User(
                 public_id=str(uuid.uuid4()),
                 email=data['email'],
                 username=data['username'],
                 password=data['password'],
-                registered_on=datetime.datetime.utcnow()
+                registered_on=datetime.datetime.utcnow(),
+                major=majorparse
             )
             save_changes(new_user)
             response_object = {
@@ -105,6 +108,7 @@ def verify_a_user(data):
 def save_changes(data):
     db.session.add(data)
     db.session.commit()
+    db.session.close()
 
 # email 형식 체크
 def checkmail(email):
