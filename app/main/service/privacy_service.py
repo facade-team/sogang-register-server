@@ -123,6 +123,7 @@ def dropout(user_email,data):
             # db 테이블에서 삭제
             db.session.delete(user)
             db.session.commit()
+            db.session.close()
             response_object = {
                 'status': 'success',
                 'message': '회원 탈퇴 되었습니다.'
@@ -151,3 +152,4 @@ def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
 def save_changes(data):
     db.session.add(data)
     db.session.commit()
+    db.session.close()

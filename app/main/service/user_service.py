@@ -51,14 +51,14 @@ def save_new_user(data):
         return response_object,402
 
 def gen_secret_code(email):
-    temp = random_generator(6)
+    temp = random_generator(12)
 
     # db에 임시 코드 저장
     user = User.query.filter_by(email=email).first()
     if user :
         user.verify_code = temp
         db.session.commit()
-        #db.session.close()
+        db.session.close()
 
         email_object = {
             'purpose': 'register',
@@ -87,11 +87,10 @@ def verify_a_user(data):
     if user:
         if user.verify_code == data['script']:
             user.verify_on = True
-            db.session.commit()
-
             # 인증 완료 한 후 인증 코드 column 초기화
             user.verify_code = None
             db.session.commit()
+            db.session.close()
 
             response_object = {
                 'status': 'success',
