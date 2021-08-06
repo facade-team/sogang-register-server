@@ -19,7 +19,6 @@ def save_new_user(data):
         # db에 중복되는 email 주소 없음.
         if not user:
             majorparse = ' '.join(data['major'])
-            print(majorparse)
             new_user = User(
                 public_id=str(uuid.uuid4()),
                 email=data['email'],
