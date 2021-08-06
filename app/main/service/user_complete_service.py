@@ -1,7 +1,7 @@
 
 from re import split, sub
 from main import db
-from main.model.user_subject import UserSubject
+from main.model.user_complete import UserComplete
 from main.model.user import User
 from main import cur
 
@@ -25,15 +25,16 @@ zip_cols = (
 )
 def get_subjects(user_email):
     # Join table에서 해당 유저의 모든 즐겨찾기 과목 검색
-    user = UserSubject.query.filter_by(email=user_email).all()
-    #user = db.session.query(UserSubject.subject_id).filter(UserSubject.email == user_email).all()
+    user = UserComplete.query.filter_by(email=user_email).all()
     if user:
         # 배열로 먼저 가져온 다음 순차적으로 하나씩 뽑아서 response 완성하자
         res = []
+        sub_code = []
         for i in user:
-            print(i.subject_id)
+            
             # 어떤 table에서 뽑을 건지 결정
             splitdata = i.subject_id.split('-')
+            sub_code.append(splitdata[2])
             target_table = 's' + splitdata[0] + '_' + splitdata[1]
             # 테이블에서 해당 id 조회
             cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
@@ -43,7 +44,8 @@ def get_subjects(user_email):
         response_object = {
             'status': 'success',
             'message': '해당 유저의 즐겨찾기 목록 조회 완료',
-            'data':res
+            'data':res,
+            'subject_code': sub_code
         }
         return response_object, 201
     else:
@@ -59,14 +61,11 @@ def add_subjects(user_email, data):
     user = User.query.filter_by(email=user_email).first()
     
     if user:
-        subjectlist = data['sub_id']
-        del_subjects(user_email)
-        for i in subjectlist:
-            new_favorite = UserSubject(
-                email = user_email,
-                subject_id = i
-            )
-            save_changes(new_favorite)
+        new_favorite = UserComplete(
+            email = user_email,
+            subject_id = data['sub_id']
+        )
+        save_changes(new_favorite)
         response_object = {
             'status': 'success',
             'message': '즐겨찾기에 추가, 혹은 업데이트 되었습니다.'
@@ -79,24 +78,23 @@ def add_subjects(user_email, data):
         }
         return response_object, 201
 
-def del_subjects(user_email):
+def del_subjects(user_email,data):
     # Join table에서 해당 유저의 해당 즐겨찾기 과목 전체 삭제
-    user = UserSubject.query.filter_by(email=user_email).all()
+    #user = UserComplete.query.filter_by(email=user_email).all()
+    user = db.session.query(UserComplete).filter(UserComplete.email == user_email,UserComplete.subject_id == data['sub_id']).first()
     if user:
-        # 몇 번 찾아서 지울건지 체크
-        for i in user:
-            db.session.delete(i)
-            db.session.commit()
-            db.session.close()
+        db.session.delete(user)
+        db.session.commit()
+        db.session.close()
         response_object = {
             'status': 'success',
-            'message': '즐겨찾기에 등록된 모든 과목을 삭제했습니다.'
+            'message': '해당 과목을 수강완료한 등록에서 삭제했습니다.'
         }
         return response_object, 201
     else:
         response_object = {
             'status': 'fail',
-            'message': '즐겨찾기에 등록된 과목이 없습니다.'
+            'message': '수강완료한 과목이 없습니다.'
         }
         return response_object
 
@@ -104,14 +102,3 @@ def save_changes(data):
     db.session.add(data)
     db.session.commit()
     db.session.close()
-
-def count_favorites(favorites):
-    fb_list = favorites.split(' ')
-    c =len(fb_list) 
-    if c < 11 :
-        return c
-    else :
-        return 11
-
-# def get_a_user(public_id):
-#     return User.query.filter_by(public_id=public_id).first()
