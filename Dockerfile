@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Add source code
 ADD app /home/app
-ADD migrations /home
+ADD migrations /home/migrations
 ADD requirements.txt /home
 ADD manage.py /home
 
