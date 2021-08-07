@@ -31,18 +31,21 @@ def save_new_user(data):
                 'status': 'success',
                 'message': '회원가입 되었습니다.'
             }
+            db.session.close()
             return response_object, 201
         else:
             response_object = {
                 'status': 'fail',
                 'message': '이미 가입된 email 주소입니다.',
             }
+            db.session.close()
             return response_object, 401
     else:
         response_object = {
             'status': 'fail',
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
+        db.session.close()
         return response_object,402
 
 def gen_secret_code(email):
@@ -66,12 +69,14 @@ def gen_secret_code(email):
             'status': 'success',
             'message': '인증 코드 발송 성공'
         }
+        db.session.close()
         return response_object, 201
     else:
         response_object = {
             'status': 'fail',
             'message': '해당 email이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 401
 
 def verify_a_user(data):
@@ -89,18 +94,21 @@ def verify_a_user(data):
                 'status': 'success',
                 'message': '해당 유저 이메일 인증 성공'
             }
+            db.session.close()
             return response_object, 201
         else:
             response_object = {
                 'status': 'fail',
                 'message': '잘못된 인증 코드를 입력했습니다.'
             }
+            db.session.close()
             return response_object, 401
     else:
         response_object = {
             'status': 'fail',
             'message': '해당하는 이메일이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 402
 
 def save_changes(data):
@@ -124,17 +132,42 @@ def can_use(email):
                     'status': 'success',
                     'message': '사용 가능한 email 입니다.'
                 }
+            db.session.close()
             return response_object, 201
         else:
             response_object = {
                     'status': 'fail',
                     'message': '중복된 email 입니다.'
                 }
+            db.session.close()
             return response_object, 401
     else:
         response_object = {
             'status': 'fail',
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
+        db.session.close()
         return response_object, 402
         
+def get_user(email):
+  user = User.query.filter_by(email=email).first()
+  if user:
+        response_object = {
+            'status': 'success',
+            'message': '회원 조회에 성공했습니다.',
+            'data': {
+                'email' : user.email,
+                'username' : user.username,
+                'major' : ['컴퓨터공학과', '경제학과']
+            }
+        }
+        db.session.close()
+        return response_object, 201
+  else:
+      response_object = {
+          'status': 'fail',
+          'message': '해당 회원이 없습니다.'
+      }
+      db.session.close()
+      return response_object, 401
+  

@@ -16,6 +16,7 @@ def search_email(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 402
     else:
         if username == user.username : 
@@ -24,6 +25,7 @@ def search_email(data):
                 'status': 'success',
                 'message': '해당하는 이메일이 존재합니다.'
             }
+            db.session.close()
             return response_object, 201
         else:
             # email 은 존재, 이름이 틀린 경우
@@ -31,6 +33,7 @@ def search_email(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
+            db.session.close()
             return response_object, 401
 
 def search_password(data):
@@ -44,6 +47,7 @@ def search_password(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 402
     else:
         if username == user.username :
@@ -64,12 +68,14 @@ def search_password(data):
                     'status': 'success',
                     'message': '해당하는 이메일로 임시 password를 전송했습니다.'
                 }
+                db.session.close()
                 return response_object, 201
             else:
                 response_object = {
                     'status': 'fail',
                     'message': 'db 접속 실패'
                 }
+                db.session.close()
                 return response_object, 411
         else:
             # email 은 존재, 이름이 틀린 경우
@@ -77,6 +83,7 @@ def search_password(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
+            db.session.close()
             return response_object, 401
 
 def set_password(user, pwd):
@@ -98,12 +105,14 @@ def change_password(user_email,data):
             'status': 'success',
             'message': '새로운 비밀번호로 변경되었습니다.'
         }
+        db.session.close()
         return response_object, 201
     else:
         response_object = {
             'status': 'fail',
             'message': '이전 비밀번호가 일치하지 않습니다.'
         }
+        db.session.close()
         return response_object, 401
 
 def dropout(user_email,data):
@@ -119,18 +128,21 @@ def dropout(user_email,data):
                 'status': 'success',
                 'message': '회원 탈퇴 되었습니다.'
             }
+            db.session.close()
             return response_object, 201
         else:
             response_object = {
                 'status': 'fail',
                 'message': '입력한 form에서 이름이 일치하지 않은 경우'
             }
+            db.session.close()
             return response_object, 402
     else:
         response_object = {
             'status': 'fail',
             'message': '비밀번호가 일치하지 않습니다.'
         }
+        db.session.close()
         return response_object, 401
     
 
