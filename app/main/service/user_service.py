@@ -20,7 +20,6 @@ def save_new_user(data):
         if not user:
             majorparse = ' '.join(data['major'])
             new_user = User(
-                public_id=str(uuid.uuid4()),
                 email=data['email'],
                 username=data['username'],
                 password=data['password'],
@@ -138,6 +137,4 @@ def can_use(email):
             'message': '입력한 email 주소는 맞는 형식이 아닙니다.'
         }
         return response_object, 402
-
-# def get_a_user(public_id):
-#     return User.query.filter_by(public_id=public_id).first()
+        
