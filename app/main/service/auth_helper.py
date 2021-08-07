@@ -24,7 +24,7 @@ class Auth:
                             'data': {
                                 'email' : user.email,
                                 'username' : user.username,
-                                'major' : major,
+                                'major' : ['컴퓨터공학과', '경제학과'],
                                 'Authorization': auth_token
                             }
                             #user.decode_auth_token(auth_token)
