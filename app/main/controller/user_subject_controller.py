@@ -9,7 +9,11 @@ from app.main.service.auth_helper import Auth
 api = JoinTable.api
 subject_id = JoinTable.subject
 
+#parser = api.parser()
+#parser.add_argument('Authorization', location='headers')
+
 @api.route('/favorites')
+#@api.expect(parser)
 class NewUser(Resource):
     @api.doc('list of user favorite subjects')
     def get(self):
