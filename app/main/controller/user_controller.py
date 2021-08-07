@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code, get_user
+from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code, get_user,allow_email
 
 from app.main.service.auth_helper import Auth
 
@@ -27,6 +27,19 @@ class Users(Resource):
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
             return get_user(res['email'])
+        else:
+            return '유효하지 않은 토큰입니다.'
+
+@api.route('/allowemail')
+@api.expect(parser)
+class Users(Resource):
+    @api.doc('email 수신 동의,비동의 전환 api')
+    def get(self):
+        '''해당 user의 email 수신 동의/비동의 전환 api'''
+        auth_header = request.headers.get('Authorization')
+        res = Auth.middleware(data=auth_header)
+        if res['status'] == 'success':
+            return allow_email(res['email'])
         else:
             return '유효하지 않은 토큰입니다.'
 

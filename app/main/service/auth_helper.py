@@ -3,32 +3,25 @@ from app.main import db
 from app.main.service.user_service import get_user
 
 class Auth:
-
     @staticmethod
     def login_user(data):
         try:
-            # fetch the user data
             user = User.query.filter_by(email=data['email']).first()
             if user and user.check_password(data['password']):
                 # 인증 여부 확인
                 if user.verify_on == True:
                     # 여기서부터 토큰 부여하는 로직
-                    # jwt 형식으로 암호화해서 auth_token 생성
                     auth_token = user.encode_auth_token(user)
                     if auth_token:
-                        major=get_user(data['email'])
+                        user_data=get_user(data['email'])[0]['data']
+                        user_data['Authorization'] = auth_token
 
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'data': {
-                                'email' : user.email,
-                                'username' : user.username,
-                                'major' : ['컴퓨터공학과', '경제학과'],
-                                'Authorization': auth_token
-                            }
-                            #user.decode_auth_token(auth_token)
+                            'data': user_data
                         }
+                        #user.decode_auth_token(auth_token)
                         db.session.close()
                         return response_object, 201
                     else:
@@ -39,12 +32,26 @@ class Auth:
                         db.session.close()
                         return response_object, 401
                 else:
-                    response_object = {
-                    'status': 'fail',
-                    'message': '이메일 인증을 먼저 해 주세요'
-                    }
-                    db.session.close()
-                    return response_object, 402
+                    # 여기서부터 토큰 부여하는 로직
+                    auth_token = user.encode_auth_token(user)
+                    if auth_token:
+                        user_data=get_user(data['email'])[0]['data']
+                        user_data['Authorization'] = auth_token
+
+                        response_object = {
+                            'status': 'success',
+                            'message': '인증은 안되어있지만 로그인 성공',
+                            'data': user_data
+                        }
+                        db.session.close()
+                        return response_object, 202
+                    else:
+                        response_object = {
+                        'status': 'fail',
+                        'message': 'token 생성 실패'
+                        }
+                        db.session.close()
+                        return response_object, 401
             else:
                 response_object = {
                     'status': 'fail',

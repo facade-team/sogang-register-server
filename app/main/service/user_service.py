@@ -24,7 +24,8 @@ def save_new_user(data):
                 username=data['username'],
                 password=data['password'],
                 registered_on=datetime.datetime.utcnow(),
-                major=majorparse
+                major=majorparse,
+                allow_email=data['allow_email']
             )
             save_changes(new_user)
             response_object = {
@@ -48,8 +49,27 @@ def save_new_user(data):
         db.session.close()
         return response_object,402
 
+def allow_email(email):
+    user = User.query.filter_by(email=email).first()
+    if user.allow_email == False:
+        user.allow_email = True
+        response_object = {
+            'status': 'success',
+            'message': '이메일 수신 동의로 변경'
+        }
+    else:
+        user.allow_email = False
+        response_object = {
+            'status': 'success',
+            'message': '이메일 수신 거부로 변경'
+        }
+    db.session.commit()
+    db.session.close()
+    return response_object, 201
+    
+
 def gen_secret_code(email):
-    temp = random_generator(12)
+    temp = random_generator(6)
 
     # db에 임시 코드 저장
     user = User.query.filter_by(email=email).first()
@@ -150,8 +170,8 @@ def can_use(email):
         return response_object, 402
         
 def get_user(email):
-  user = User.query.filter_by(email=email).first()
-  if user:
+    user = User.query.filter_by(email=email).first()
+    if user:
         major = "전공없음"
         if user.major:
             major = user.major
@@ -162,15 +182,20 @@ def get_user(email):
             'data': {
                 'email' : user.email,
                 'username' : user.username,
-                'major' : major
+                'major' : major,
+                'allow_email': user.allow_email,
+                'verify_on': user.verify_on
             }
         }
         db.session.close()
         return response_object, 201
-  else:
-      response_object = {
-          'status': 'fail',
-          'message': '해당 회원이 없습니다.'
-      }
-      db.session.close()
-      return response_object, 401
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': '해당 회원이 없습니다.',
+            'data': {
+                'major': 'no user'
+            }
+        }
+        db.session.close()
+        return response_object, 401

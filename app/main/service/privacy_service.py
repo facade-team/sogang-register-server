@@ -52,7 +52,7 @@ def search_password(data):
     else:
         if username == user.username :
             # email, name matched. 임시 password email로 전송.
-            temp = random_generator()
+            temp = random_generator(12)
             # db 수정
 
             if set_password(user,temp):
