@@ -1,5 +1,7 @@
 from app.main.model.user import User
 from app.main import db
+from app.main.service.user_service import get_user
+
 class Auth:
 
     @staticmethod
@@ -14,13 +16,15 @@ class Auth:
                     # jwt 형식으로 암호화해서 auth_token 생성
                     auth_token = user.encode_auth_token(user)
                     if auth_token:
+                        major=get_user(data['email'])
+
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
                             'data': {
                                 'email' : user.email,
                                 'username' : user.username,
-                                'major' : ['컴퓨터공학과', '경제학과'],
+                                'major' : major,
                                 'Authorization': auth_token
                             }
                             #user.decode_auth_token(auth_token)
@@ -49,7 +53,7 @@ class Auth:
                 db.session.close()
                 return response_object, 403
         except Exception as e:
-            print(e)
+            print(str(e))
             response_object = {
                 'status': 'fail',
                 'message': 'Try again',

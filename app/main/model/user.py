@@ -10,6 +10,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=False, nullable=False)
     major = db.Column(db.String(120), nullable=True)
     password_hash = db.Column(db.String(120))
+    allow_email = db.Column(db.Boolean, default = False, nullable = False)
     registered_on = db.Column(db.DateTime, nullable=False)
     verify_on = db.Column(db.Boolean, default = False, nullable = False)
     verify_code = db.Column(db.String(20), nullable=True)

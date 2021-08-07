@@ -152,13 +152,17 @@ def can_use(email):
 def get_user(email):
   user = User.query.filter_by(email=email).first()
   if user:
+        major = "전공없음"
+        if user.major:
+            major = user.major
+        
         response_object = {
             'status': 'success',
             'message': '회원 조회에 성공했습니다.',
             'data': {
                 'email' : user.email,
                 'username' : user.username,
-                'major' : ['컴퓨터공학과', '경제학과']
+                'major' : major
             }
         }
         db.session.close()
@@ -170,4 +174,3 @@ def get_user(email):
       }
       db.session.close()
       return response_object, 401
-  
