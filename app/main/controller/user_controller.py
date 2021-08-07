@@ -14,7 +14,11 @@ _user = UserDto.user
 verify_model = UserDto.user_verify
 user_email = UserDto.user_email
 
+parser = api.parser()
+parser.add_argument('Authorization', location='headers')
+
 @api.route('')
+@api.expect(parser)
 class Users(Resource):
     @api.doc('user 정보 조회')
     def get(self):

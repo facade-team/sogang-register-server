@@ -9,11 +9,11 @@ from app.main.service.auth_helper import Auth
 api = JoinTable.api
 subject_id = JoinTable.subject
 
-#parser = api.parser()
-#parser.add_argument('Authorization', location='headers')
+parser = api.parser()
+parser.add_argument('Authorization', location='headers')
 
 @api.route('/favorites')
-#@api.expect(parser)
+@api.expect(parser)
 class NewUser(Resource):
     @api.doc('list of user favorite subjects')
     def get(self):
@@ -25,6 +25,7 @@ class NewUser(Resource):
 
 
 @api.route('/favorites/update')
+@api.expect(parser)
 class NewUser(Resource):
     @api.expect(subject_id, validate=True)
     @api.response(201, '즐겨찾기에 추가, 혹은 업데이트 되었습니다.')
@@ -39,6 +40,7 @@ class NewUser(Resource):
             return add_subjects(res['email'],data)
 
 @api.route('/favorites/del')
+@api.expect(parser)
 class NewUser(Resource):
     @api.response(201, '즐겨찾기에 등록된 모든 과목을 삭제했습니다.')
     @api.doc('해당 유저의 모든 즐겨찾기 삭제')

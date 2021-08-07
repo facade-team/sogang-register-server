@@ -12,6 +12,9 @@ privacy = PrivacyDto.privacy
 changepwd = PrivacyDto.changepwd
 drop = PrivacyDto.drop
 
+parser = api.parser()
+parser.add_argument('Authorization', location='headers')
+
 @api.route('/emailsearch')
 class EmailSearch(Resource):
     @api.expect(privacy, validate=True)
@@ -38,6 +41,7 @@ class PasswordSearch(Resource):
         return search_password(data=data)
 
 @api.route('/passwordchange')
+@api.expect(parser)
 class PasswordChange(Resource):
     @api.expect(changepwd, validate=True)
     @api.response(201, '새로운 비밀번호로 변경되었습니다.')
@@ -53,6 +57,7 @@ class PasswordChange(Resource):
             return change_password(res['email'],data = data)
 
 @api.route('/dropout')
+@api.expect(parser)
 class UserDropOut(Resource):
     @api.expect(drop, validate=True)
     @api.response(201, '회원 탈퇴 되었습니다.')
