@@ -49,31 +49,31 @@ def save_new_user(data):
         db.session.close()
         return response_object,402
 
-def allow_email(email):
+def allow_email(email, data):
     user = User.query.filter_by(email=email).first()
-    if user.allow_email == False:
-        user.allow_email = True
+    if user:
+        user.allow_email = data['allow_email']
+        user.major = ' '.join(data['major'])
+        db.session.commit()
+        db.session.close()
         response_object = {
             'status': 'success',
-            'message': '이메일 수신 동의로 변경'
+            'message': '해당 유저의 전공 변경 및 이메일 동의 여부 변경'
         }
+        return response_object, 201
     else:
-        user.allow_email = False
         response_object = {
-            'status': 'success',
-            'message': '이메일 수신 거부로 변경'
+            'status': 'fail',
+            'message': '존재하지 않는 유저'
         }
-    db.session.commit()
-    db.session.close()
-    return response_object, 201
-    
+        db.session.close()
+        return response_object, 401
 
 def gen_secret_code(email):
     temp = random_generator(6)
-
     # db에 임시 코드 저장
     user = User.query.filter_by(email=email).first()
-    if user :
+    if user:
         user.verify_code = temp
         db.session.commit()
         db.session.close()
@@ -174,7 +174,7 @@ def get_user(email):
     if user:
         major = "전공없음"
         if user.major:
-            major = user.major
+            major = user.major.split(' ')
         
         response_object = {
             'status': 'success',
