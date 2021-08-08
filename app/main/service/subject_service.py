@@ -1,8 +1,6 @@
 from main import db
-#from main import cur, con
 import pandas as pd
 from sqlalchemy.sql import text
-# from main.util.departments import departments, departments_text_list
 columns = (
     'id',
     '학년도',
@@ -85,65 +83,6 @@ def get_professors_list():
     print(len(res))
     db.session.close()
     return res
-'''
-def get_data_by_department(department):
-  cur.execute("SELECT {} FROM s21_2 WHERE 학과 = '{}'".format(query_cols, department))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_grade(data):
-  grades = data['grade']
-  # payload에 학년이 안담겼을 경우
-  if len(grades) == 0:
-      return 'error!'
-  # 한 개 학년일 경우
-  elif len(grades) == 1:
-      grade = str(grades[0])+'학년'
-  # 전학년일 경우    
-  elif len(grades) == 4:
-      grade = '전학년'
-  # 2개 ~ 3개 학년일 경우
-  else:
-      grade = ''
-      for i in range(len(grades) - 1):
-        grade += str(grades[i])+','
-      grade += str(grades[len(grades) - 1])+'학년'
-  cur.execute("SELECT {} FROM s21_2 WHERE 수강대상 = '{}'".format(query_cols, grade))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_credit(data):
-  credits = data['credit']
-  # payload에 학점이 안담겼을 경우
-  if len(credits) == 0:
-    return 'error!'
-  elif len(credits) == 1:
-    credit = '학점 = '+str(credits[0])
-  elif len(credits) == 2:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])
-  else:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])+' OR 학점 = '+str(credits[2])
-  cur.execute("SELECT {} FROM s21_2 WHERE {}".format(query_cols, credit))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_keyword(data):
-  option = data['option']
-  keyword = data['keyword']
-  if not option in ['과목명', '과목번호', '교수진', '강의실']:
-    return "error! option must be one of '과목명', '과목번호', '과목코드', '강의실'"
-  cur.execute("SELECT {} FROM s21_2 WHERE {} LIKE '%{}%'".format(query_cols, option, keyword))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-'''
 
 def set_department_query_string(department):
   return "department LIKE '%{}%'".format(department)
@@ -290,11 +229,9 @@ def get_departments(year, semester):
     return response_object, 403
   text_col = 's{}_{}_text'.format(year, semester)
   id_col = 's{}_{}_id'.format(year, semester)
-  #cur.execute("SELECT {}, {} FROM departments".format(text_col, id_col))
   cur = db.session.execute(text("SELECT {}, {} FROM departments".format(text_col, id_col)))
   res = []
   for elem in cur:
-      # res.append(dict(zip(zip_cols, elem)))
       if elem[0] != None:
         res.append({
           'text': elem[0],
