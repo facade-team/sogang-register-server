@@ -13,6 +13,7 @@ api = UserDto.api
 _user = UserDto.user
 verify_model = UserDto.user_verify
 user_email = UserDto.user_email
+major_email = UserDto.major_email
 
 parser = api.parser()
 parser.add_argument('Authorization', location='headers')
@@ -30,18 +31,19 @@ class Users(Resource):
         else:
             return '유효하지 않은 토큰입니다.'
 
-@api.route('/allowemail')
+@api.route('/majoremail')
 @api.expect(parser)
 class Users(Resource):
-    @api.doc('email 수신 동의,비동의 전환 api')
-    def get(self):
-        '''해당 user의 email 수신 동의/비동의 전환 api'''
+    @api.expect(major_email, validate=True)
+    @api.response(201, '회원정보 수정 완료되었습니다.')
+    @api.doc('전공 변경 + email 수신 동의,비동의 전환 api')
+    def post(self):
+        '''해당 user의 전공 변경 + email 수신 동의/비동의 전환 api'''
         auth_header = request.headers.get('Authorization')
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
-            return allow_email(res['email'])
-        else:
-            return '유효하지 않은 토큰입니다.'
+            data = request.json
+            return allow_email(res['email'],data = data)
 
 @api.route('/register')
 class NewUser(Resource):
