@@ -16,4 +16,4 @@ WORKDIR /home
 ENV FLASK_APP=manage.py
 
 # ENTRYPOINT
-ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT python manage.py run
