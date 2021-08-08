@@ -46,7 +46,7 @@ class PrivacyDto:
     })
 
 class JoinTable:
-    api = Namespace('join', description='Favorite subjects in here')
+    api = Namespace('favorites', description='Favorite subjects in here')
     subject = api.model('sub_id', {
         'sub_id': fields.List(fields.String(description='add and delete subject id in join table'), required=True),
     })

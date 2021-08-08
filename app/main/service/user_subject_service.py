@@ -51,14 +51,14 @@ def get_subjects(user_email):
             'status': 'success',
             'message': '즐겨찾기에 아직 아무것도 등록 안됨'
         }
-        return response_object, 201
+        return response_object, 202
 
 def add_subjects(user_email, data):
     # Join table에 해당 유저의 id + subject_id로 추가
     # 존재하는 유저인지 검증
     user = User.query.filter_by(email=user_email).first()
     
-    if user:
+    if user.verify_on == True:
         subjectlist = data['sub_id']
         del_subjects(user_email)
         for i in subjectlist:
@@ -67,17 +67,19 @@ def add_subjects(user_email, data):
                 subject_id = i
             )
             save_changes(new_favorite)
+        db.session.close()
         response_object = {
             'status': 'success',
             'message': '즐겨찾기에 추가, 혹은 업데이트 되었습니다.'
         }
         return response_object, 201
     else:
+        db.session.close()
         response_object = {
             'status': 'fail',
-            'message': '등록된 사용자가 아닙니다.'
+            'message': '사용자의 이메일 인증이 완료되지 않았습니다.'
         }
-        return response_object, 201
+        return response_object, 202
 
 def del_subjects(user_email):
     # Join table에서 해당 유저의 해당 즐겨찾기 과목 전체 삭제
@@ -92,12 +94,14 @@ def del_subjects(user_email):
             'status': 'success',
             'message': '즐겨찾기에 등록된 모든 과목을 삭제했습니다.'
         }
+        db.session.close()
         return response_object, 201
     else:
         response_object = {
             'status': 'fail',
             'message': '즐겨찾기에 등록된 과목이 없습니다.'
         }
+        db.session.close()
         return response_object
 
 def save_changes(data):
