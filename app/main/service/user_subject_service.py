@@ -39,6 +39,7 @@ def get_subjects(user_email):
             # 리턴 오브젝트에 추가 후 한번에 리턴
             for elem in cur:
                 res.append(dict(zip(zip_cols, elem)))
+            db.session.close()  # session close add
         db.session.close()        
         response_object = {
             'status': 'success',

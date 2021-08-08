@@ -23,7 +23,8 @@ def create_app(config_name):
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 3600
     db.init_app(app)
     flask_bcrypt.init_app(app)
-    CORS(app)
+    #CORS(app)
+    CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
     #mail 관련 config - main/config에 추가, mount
     # mail config
