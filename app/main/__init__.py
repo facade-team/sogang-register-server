@@ -24,7 +24,9 @@ def create_app(config_name):
     db.init_app(app)
     flask_bcrypt.init_app(app)
     #CORS(app)
-    CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
+    #CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
+    CORS(app, resources={r'*': {'origins': '*'}})
+
 
     #mail 관련 config - main/config에 추가, mount
     # mail config
