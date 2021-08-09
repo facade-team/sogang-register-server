@@ -1,38 +1,6 @@
 from main import db
 import pandas as pd
 from sqlalchemy.sql import text
-columns = (
-    'id',
-    '학년도',
-    '학기',
-    '소속',
-    '학과',
-    '과목번호',
-    '분반',
-    '과목명',
-    '강의계획서',
-    '학점',
-    '수업시간_강의실',
-    '시간',
-    '교수진',
-    '수강생수',
-    '영어강의',
-    '중국어강의',
-    '공학인증',
-    '국제학생',
-    'Honors과목',
-    '홀짝구분',
-    '승인과목',
-    '시험일자',
-    '수강대상',
-    '권장학년',
-    '수강신청_참조사항',
-    '과목_설명',
-    '비고',
-    'subject_id',
-    '전인교육원'
-)
-
 zip_cols = (
   'subject_id',
   '과목명',
@@ -158,7 +126,7 @@ def get_data_by_option(data):
       'message': 'payload 형식이 잘못되었습니다.'
   }
   
-  if year not in ['20', '21'] or semester not in ['1','2','s','w']:
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
     response_object = {
         'status': 'fail',
         'message': '잘못된 학년도와 학기 입니다.'
@@ -227,7 +195,7 @@ def get_data_by_option(data):
   return response_object
 
 def get_departments(year, semester):
-  if year not in ['20', '21'] or semester not in ['1','2','s','w']:
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
     response_object = {
         'status': 'fail',
         'message': '잘못된 학년도와 학기 입니다.'

@@ -11,7 +11,8 @@ from flask_script import Manager
 from app import blueprint
 from app.main import create_app, db
 from app.main.model import user, user_subject, user_complete #model을 정의한 폴더 import
-from app.main.model.subjects import t_departments, t_s20_1, t_s20_2, t_s20_s, t_s20_w, t_s21_1, t_s21_2, t_s21_s
+#from app.main.model.subjects import t_departments, t_s20_1, t_s20_2, t_s20_s, t_s20_w, t_s21_1, t_s21_2, t_s21_s
+from app.main.model.subjects import t_departments, s18_1, s18_2, s18_s, s18_w, s19_1, s19_2, s19_s, s19_w, s20_1, s20_2, s20_s, s20_w, s21_1, s21_2, s21_s
 
 # 환경 변수에서 필요한 매개 변수를 사용하여 응용 프로그램 인스턴스를 생성 초기에 만들어진 기능 - dev, prod, test. 환경 변수에 아무것도 설정되지 않은 경우 기본값 dev이 사용됩니다.
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev') 
