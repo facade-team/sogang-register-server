@@ -1,6 +1,7 @@
 import os
 import unittest
 import sys
+import ssl
 # app 폴더를 패키지로 인식하게끔 path 등록
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/app')
 
@@ -26,10 +27,14 @@ migrate = Migrate(app, db)
 
 manager.add_command('db', MigrateCommand)
 
+base_path = os.path.dirname(os.path.realpath(__file__))
 
 @manager.command
 def run():
-    app.run(host='0.0.0.0')
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    ssl_context.load_cert_chain(certfile=base_path+'/app/certificate/server.crt', keyfile=base_path+'/app/certificate/server.key', password='1234')
+    app.run(host="0.0.0.0", port=443, ssl_context=ssl_context)
+    #app.run(host='0.0.0.0')
 
 
 @manager.command
