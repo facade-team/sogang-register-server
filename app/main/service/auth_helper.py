@@ -1,50 +1,71 @@
 from app.main.model.user import User
+from app.main import db
+from app.main.service.user_service import get_user
 
 class Auth:
-
     @staticmethod
     def login_user(data):
         try:
-            # fetch the user data
             user = User.query.filter_by(email=data['email']).first()
             if user and user.check_password(data['password']):
                 # 인증 여부 확인
                 if user.verify_on == True:
                     # 여기서부터 토큰 부여하는 로직
-                    # jwt 형식으로 암호화해서 auth_token 생성
                     auth_token = user.encode_auth_token(user)
                     if auth_token:
+                        user_data=get_user(data['email'])[0]['data']
+                        user_data['Authorization'] = auth_token
+
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'Authorization': auth_token
-                            #user.decode_auth_token(auth_token)
+                            'data': user_data
                         }
+                        #user.decode_auth_token(auth_token)
+                        db.session.close()
                         return response_object, 201
                     else:
                         response_object = {
                         'status': 'fail',
                         'message': 'token 생성 실패'
                         }
+                        db.session.close()
                         return response_object, 401
                 else:
-                    response_object = {
-                    'status': 'fail',
-                    'message': '이메일 인증을 먼저 해 주세요'
-                    }
-                    return response_object, 402
+                    # 여기서부터 토큰 부여하는 로직
+                    auth_token = user.encode_auth_token(user)
+                    if auth_token:
+                        user_data=get_user(data['email'])[0]['data']
+                        user_data['Authorization'] = auth_token
+
+                        response_object = {
+                            'status': 'success',
+                            'message': '인증은 안되어있지만 로그인 성공',
+                            'data': user_data
+                        }
+                        db.session.close()
+                        return response_object, 202
+                    else:
+                        response_object = {
+                        'status': 'fail',
+                        'message': 'token 생성 실패'
+                        }
+                        db.session.close()
+                        return response_object, 401
             else:
                 response_object = {
                     'status': 'fail',
                     'message': 'email or password does not match.'
                 }
+                db.session.close()
                 return response_object, 403
         except Exception as e:
-            print(e)
+            print(str(e))
             response_object = {
                 'status': 'fail',
                 'message': 'Try again',
             }
+            db.session.close()
             return response_object, 404
             
     # token 유효성 판단. decode -> exp, iat 확인 -> true, false 리턴
@@ -67,10 +88,12 @@ class Auth:
                         'message': 'token 인증이 완료되었습니다.',
                         'email': user.email
                     }
+                db.session.close()
                 return response_object
         else:
             response_object = {
                 'status': 'fail',
                 'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
             }
+            db.session.close()
             return response_object, 403

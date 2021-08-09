@@ -1,9 +1,7 @@
-
-from re import split, sub
 from main import db
 from main.model.user_complete import UserComplete
 from main.model.user import User
-from main import cur
+from sqlalchemy.sql import text
 
 query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, 시작시간, 종료시간, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어'
 zip_cols = (
@@ -37,10 +35,12 @@ def get_subjects(user_email):
             sub_code.append(splitdata[2])
             target_table = 's' + splitdata[0] + '_' + splitdata[1]
             # 테이블에서 해당 id 조회
-            cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
+            #cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
+            cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id)))
             # 리턴 오브젝트에 추가 후 한번에 리턴
             for elem in cur:
-                res.append(dict(zip(zip_cols, elem)))        
+                res.append(dict(zip(zip_cols, elem)))
+        db.session.close()      
         response_object = {
             'status': 'success',
             'message': '해당 유저의 즐겨찾기 목록 조회 완료',

@@ -9,7 +9,11 @@ from app.main.service.auth_helper import Auth
 api = Complete.api
 subject_id = Complete.subject
 
+parser = api.parser()
+parser.add_argument('Authorization', location='headers')
+
 @api.route('/')
+@api.expect(parser)
 class NewUser(Resource):
     @api.doc('list of user completed subject codes')
     def get(self):
@@ -21,6 +25,7 @@ class NewUser(Resource):
 
 
 @api.route('/add')
+@api.expect(parser)
 class NewUser(Resource):
     @api.expect(subject_id, validate=True)
     @api.response(201, '수강완료 과목에 추가했습니다.')
@@ -35,6 +40,7 @@ class NewUser(Resource):
             return add_subjects(res['email'],data)
 
 @api.route('/del')
+@api.expect(parser)
 class NewUser(Resource):
     @api.expect(subject_id, validate=True)
     @api.response(201, '수강완료 과목에서 삭제되었습니다.')

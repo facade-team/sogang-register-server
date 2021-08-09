@@ -1,5 +1,7 @@
 from main import db
 from main.model.user import User
+from main.model.user_subject import UserSubject
+from main.model.user_complete import UserComplete
 import string, random
 
 from ..service.mailer_service import sendmail
@@ -16,6 +18,7 @@ def search_email(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 402
     else:
         if username == user.username : 
@@ -24,6 +27,7 @@ def search_email(data):
                 'status': 'success',
                 'message': '해당하는 이메일이 존재합니다.'
             }
+            db.session.close()
             return response_object, 201
         else:
             # email 은 존재, 이름이 틀린 경우
@@ -31,6 +35,7 @@ def search_email(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
+            db.session.close()
             return response_object, 401
 
 def search_password(data):
@@ -44,11 +49,12 @@ def search_password(data):
             'status': 'fail',
             'message': '해당하는 email이 존재하지 않습니다.'
         }
+        db.session.close()
         return response_object, 402
     else:
         if username == user.username :
             # email, name matched. 임시 password email로 전송.
-            temp = random_generator()
+            temp = random_generator(12)
             # db 수정
 
             if set_password(user,temp):
@@ -64,12 +70,14 @@ def search_password(data):
                     'status': 'success',
                     'message': '해당하는 이메일로 임시 password를 전송했습니다.'
                 }
+                db.session.close()
                 return response_object, 201
             else:
                 response_object = {
                     'status': 'fail',
                     'message': 'db 접속 실패'
                 }
+                db.session.close()
                 return response_object, 411
         else:
             # email 은 존재, 이름이 틀린 경우
@@ -77,12 +85,14 @@ def search_password(data):
                 'status': 'fail',
                 'message': 'email과 이름이 매칭되지 않습니다.'
             }
+            db.session.close()
             return response_object, 401
 
 def set_password(user, pwd):
     try:
         user.password = pwd
         db.session.commit()
+        db.session.close()
         return True
     except Exception as e:
         print(e)
@@ -97,12 +107,14 @@ def change_password(user_email,data):
             'status': 'success',
             'message': '새로운 비밀번호로 변경되었습니다.'
         }
+        db.session.close()
         return response_object, 201
     else:
         response_object = {
             'status': 'fail',
             'message': '이전 비밀번호가 일치하지 않습니다.'
         }
+        db.session.close()
         return response_object, 401
 
 def dropout(user_email,data):
@@ -113,22 +125,41 @@ def dropout(user_email,data):
             # db 테이블에서 삭제
             db.session.delete(user)
             db.session.commit()
+            db.session.close()
+            
+            favorite = UserSubject.query.filter_by(email=user_email).all()
+            if favorite:
+                for i in favorite:
+                    db.session.delete(i)
+                    db.session.commit()
+                    db.session.close()
+            
+            compelete = UserComplete.query.filter_by(email=user_email).all()
+            if compelete:
+                for i in compelete:
+                    db.session.delete(i)
+                    db.session.commit()
+                    db.session.close()
+
             response_object = {
                 'status': 'success',
                 'message': '회원 탈퇴 되었습니다.'
             }
+            db.session.close()
             return response_object, 201
         else:
             response_object = {
                 'status': 'fail',
                 'message': '입력한 form에서 이름이 일치하지 않은 경우'
             }
+            db.session.close()
             return response_object, 402
     else:
         response_object = {
             'status': 'fail',
             'message': '비밀번호가 일치하지 않습니다.'
         }
+        db.session.close()
         return response_object, 401
     
 
@@ -138,3 +169,4 @@ def random_generator(size=6, chars=string.ascii_uppercase + string.digits):
 def save_changes(data):
     db.session.add(data)
     db.session.commit()
+    db.session.close()

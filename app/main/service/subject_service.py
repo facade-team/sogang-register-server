@@ -1,40 +1,6 @@
 from main import db
-from main.model.subject import Subject
-from main import cur, con
 import pandas as pd
-# from main.util.departments import departments, departments_text_list
-columns = (
-    'id',
-    '학년도',
-    '학기',
-    '소속',
-    '학과',
-    '과목번호',
-    '분반',
-    '과목명',
-    '강의계획서',
-    '학점',
-    '수업시간_강의실',
-    '시간',
-    '교수진',
-    '수강생수',
-    '영어강의',
-    '중국어강의',
-    '공학인증',
-    '국제학생',
-    'Honors과목',
-    '홀짝구분',
-    '승인과목',
-    '시험일자',
-    '수강대상',
-    '권장학년',
-    '수강신청_참조사항',
-    '과목_설명',
-    '비고',
-    'subject_id',
-    '전인교육원'
-)
-
+from sqlalchemy.sql import text
 zip_cols = (
   'subject_id',
   '과목명',
@@ -57,25 +23,22 @@ query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, �
 
 
 def get_all_data():
-    if True:
-      response_object = {
-                'status': 'success',
-                'message': '조회 성공입니다',
-              }
-      cur.execute("SELECT {} FROM s21_2".format(query_cols))
-      res = []
-      for elem in cur:
-          res.append(dict(zip(zip_cols, elem)))
-      return res
-    else :
-      response_object = {
-                'status': 'fail',
-                'message': '조회 실패입니다.',
-            }
-    return response_object, 401
+    #cur.execute("SELECT {} FROM s21_2".format(query_cols))
+    cur = db.session.execute(text("SELECT {} FROM s21_2;".format(query_cols)))
+    res = []
+    for elem in cur:
+        res.append(dict(zip(zip_cols, elem)))
+    db.session.close()
+    response_object = {
+        'status': 'success',
+        'message': '학부 목록 조회에 성공하였습니다.',
+        'data': res
+    }
+    return response_object
 
 def get_professors_list():
-    cur.execute("""SELECT 교수진 FROM s21_2""")
+    #cur.execute("""SELECT 교수진 FROM s21_2""")
+    cur = db.session.execute(text("SELECT 교수진 FROM s21_2"))
     res = []
     total_professor_list = []
     for elem in cur:
@@ -86,65 +49,8 @@ def get_professors_list():
       if professor != "\xa0":
         res.append(dict(zip(['교수진'], [professor])))
     print(len(res))
+    db.session.close()
     return res
-  
-def get_data_by_department(department):
-  cur.execute("SELECT {} FROM s21_2 WHERE 학과 = '{}'".format(query_cols, department))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_grade(data):
-  grades = data['grade']
-  # payload에 학년이 안담겼을 경우
-  if len(grades) == 0:
-      return 'error!'
-  # 한 개 학년일 경우
-  elif len(grades) == 1:
-      grade = str(grades[0])+'학년'
-  # 전학년일 경우    
-  elif len(grades) == 4:
-      grade = '전학년'
-  # 2개 ~ 3개 학년일 경우
-  else:
-      grade = ''
-      for i in range(len(grades) - 1):
-        grade += str(grades[i])+','
-      grade += str(grades[len(grades) - 1])+'학년'
-  cur.execute("SELECT {} FROM s21_2 WHERE 수강대상 = '{}'".format(query_cols, grade))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_credit(data):
-  credits = data['credit']
-  # payload에 학점이 안담겼을 경우
-  if len(credits) == 0:
-    return 'error!'
-  elif len(credits) == 1:
-    credit = '학점 = '+str(credits[0])
-  elif len(credits) == 2:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])
-  else:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])+' OR 학점 = '+str(credits[2])
-  cur.execute("SELECT {} FROM s21_2 WHERE {}".format(query_cols, credit))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_keyword(data):
-  option = data['option']
-  keyword = data['keyword']
-  if not option in ['과목명', '과목번호', '교수진', '강의실']:
-    return "error! option must be one of '과목명', '과목번호', '과목코드', '강의실'"
-  cur.execute("SELECT {} FROM s21_2 WHERE {} LIKE '%{}%'".format(query_cols, option, keyword))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
 
 def set_department_query_string(department):
   return "department LIKE '%{}%'".format(department)
@@ -159,6 +65,7 @@ def set_credit_query_string(credits):
   return credit
 
 def set_grade_query_string(grades):
+  '''
   # 한 개 학년일 경우
   if len(grades) == 1:
       grade = '수강대상 = "'+str(grades[0])+'학년"'
@@ -171,6 +78,11 @@ def set_grade_query_string(grades):
       for i in range(len(grades) - 1):
         grade += str(grades[i])+','
       grade += str(grades[len(grades) - 1])+'학년"'
+  '''
+  grade = '수강대상 LIKE "%전%"'
+  
+  for i in range(len(grades)):
+    grade += ' or 수강대상 LIKE "%{}%"'.format(str(grades[i]))
   return grade
 
 def set_keyword_query_string(searchby, keyword):
@@ -209,6 +121,18 @@ def get_data_by_option(data):
   searchby = None
   keyword = None
   
+  error_response_object = {
+      'status': 'fail',
+      'message': 'payload 형식이 잘못되었습니다.'
+  }
+  
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
+    response_object = {
+        'status': 'fail',
+        'message': '잘못된 학년도와 학기 입니다.'
+    }
+    return response_object, 402
+  
   if 'department' in data:
     department = data['department']
     department = set_department_query_string(department)
@@ -216,7 +140,7 @@ def get_data_by_option(data):
     credit = data['credit']
     if not check_credit_form(credit):
       credit = None
-      return 'Wrong format!'
+      return error_response_object, 402
     else:
       credit = set_credit_query_string(credit)
   if 'grade' in data:
@@ -224,7 +148,7 @@ def get_data_by_option(data):
     print(grade)
     if not check_grade_form(grade):
       grade = None
-      return 'Wrong format!'
+      return error_response_object, 402
     else:
       grade = set_grade_query_string(grade)
   if 'searchby' in data and 'keyword' in data:
@@ -233,7 +157,7 @@ def get_data_by_option(data):
     if not check_keyword_form(searchby, keyword):
       searchby = None
       keyword = None
-      return 'Wrong format!'
+      return error_response_object, 402
     else:
       searchby = set_keyword_query_string(searchby, keyword)
   
@@ -257,24 +181,40 @@ def get_data_by_option(data):
   
   print(query)
   
-  cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
+  #cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
+  cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
   res = []
   for elem in cur:
       res.append(dict(zip(zip_cols, elem)))
-  return res
+  db.session.close()
+  response_object = {
+      'status': 'success',
+      'message': '개설교과목 조회에 성공하였습니다.',
+      'data': res
+  }
+  return response_object
 
 def get_departments(year, semester):
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
+    response_object = {
+        'status': 'fail',
+        'message': '잘못된 학년도와 학기 입니다.'
+    }
+    return response_object, 403
   text_col = 's{}_{}_text'.format(year, semester)
   id_col = 's{}_{}_id'.format(year, semester)
-  cur.execute("SELECT {}, {} FROM departments".format(text_col, id_col))
+  cur = db.session.execute(text("SELECT {}, {} FROM departments".format(text_col, id_col)))
   res = []
   for elem in cur:
-      # res.append(dict(zip(zip_cols, elem)))
       if elem[0] != None:
         res.append({
           'text': elem[0],
           'id': elem[1]
         })
-  print(len(res))
-  return res
-  #return '{} and {}'.format(semester, year)
+  db.session.close()
+  response_object = {
+      'status': 'success',
+      'message': '학부 목록 조회에 성공하였습니다.',
+      'data': res
+  }
+  return response_object
