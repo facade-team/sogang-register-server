@@ -51,7 +51,7 @@ class PrivacyDto:
     })
 
 class JoinTable:
-    api = Namespace('join', description='Favorite subjects in here')
+    api = Namespace('favorites', description='Favorite subjects in here')
     subject = api.model('sub_id', {
         'sub_id': fields.List(fields.String(description='add and delete subject id in join table'), required=True),
     })
@@ -81,16 +81,6 @@ class SubjectDto:
         '대면여부': fields.String(required=True, description='test'),
         '강의언어': fields.String(required=True, description='test'),
     })
-    grade = api.model('grade', {
-        'grade': fields.List(fields.Integer)
-    })
-    credit = api.model('credit', {
-        'credit': fields.List(fields.Integer)
-    })
-    keyword = api.model('keyword', {
-      'option': fields.String(required=True, description='과목명, 교수명, 과목코드 또는 장소 중 하나'),
-      'keyword': fields.String(required=True, description='검색어')
-    })
     option = api.model('option', {
       'year': fields.String(required=True, description='학년도 (ex. 21, 20, 19, ...)'), # '21' 
       'semester': fields.String(required=True, description='학기 (ex. 1, s, 2, w)'), #'2'
@@ -100,33 +90,3 @@ class SubjectDto:
       'searchby': fields.String(required=False, description='검색옵션 (ex. "과목명", "과목번호", "교수진", "강의실" 중 하나!)'), # '과목명' # ['과목명', '과목번호', '교수진', '강의실'] 중 하나
       'keyword': fields.String(required=False, description='검색어 (notice. searchby와 같이 넘겨줘야한다.)'), #'장형수'
     })
-'''
-  '학년도': fields.String(required=True, description='test'),
-  '학기': fields.String(required=True, description='test'),
-  '소속': fields.String(required=True, description='test'),
-  '학과': fields.String(required=True, description='test'),
-  '과목번호': fields.String(required=True, description='test'),
-  '분반': fields.String(required=True, description='test'),
-  '과목명': fields.String(required=True, description='test'),
-  '강의계획서': fields.String(required=True, description='test'),
-  '학점': fields.String(required=True, description='test'),
-  '수업시간_강의실': fields.String(required=True, description='test'),
-  '시간': fields.String(required=True, description='test'),
-  '교수진': fields.String(required=True, description='test'),
-  '수강생수': fields.String(required=True, description='test'),
-  '영어강의': fields.String(required=True, description='test'),
-  '중국어강의': fields.String(required=True, description='test'),
-  '공학인증': fields.String(required=True, description='test'),
-  '국제학생': fields.String(required=True, description='test'),
-  'Honors과목': fields.String(required=True, description='test'),
-  '홀짝구분': fields.String(required=True, description='test'),
-  '승인과목': fields.String(required=True, description='test'),
-  '시험일자': fields.String(required=True, description='test'),
-  '수강대상': fields.String(required=True, description='test'),
-  '권장학년': fields.String(required=True, description='test'),
-  '수강신청_참조사항': fields.String(required=True, description='test'),
-  '과목_설명': fields.String(required=True, description='test'),
-  '비고': fields.String(required=True, description='test'),
-  'subject_id' : fields.String(required=True, description='test'),
-  '전인교육원' : fields.String(required=True, description='test')
-'''

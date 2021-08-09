@@ -1,40 +1,6 @@
 from main import db
-#from main import cur, con
 import pandas as pd
 from sqlalchemy.sql import text
-# from main.util.departments import departments, departments_text_list
-columns = (
-    'id',
-    '학년도',
-    '학기',
-    '소속',
-    '학과',
-    '과목번호',
-    '분반',
-    '과목명',
-    '강의계획서',
-    '학점',
-    '수업시간_강의실',
-    '시간',
-    '교수진',
-    '수강생수',
-    '영어강의',
-    '중국어강의',
-    '공학인증',
-    '국제학생',
-    'Honors과목',
-    '홀짝구분',
-    '승인과목',
-    '시험일자',
-    '수강대상',
-    '권장학년',
-    '수강신청_참조사항',
-    '과목_설명',
-    '비고',
-    'subject_id',
-    '전인교육원'
-)
-
 zip_cols = (
   'subject_id',
   '과목명',
@@ -85,65 +51,6 @@ def get_professors_list():
     print(len(res))
     db.session.close()
     return res
-'''
-def get_data_by_department(department):
-  cur.execute("SELECT {} FROM s21_2 WHERE 학과 = '{}'".format(query_cols, department))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_grade(data):
-  grades = data['grade']
-  # payload에 학년이 안담겼을 경우
-  if len(grades) == 0:
-      return 'error!'
-  # 한 개 학년일 경우
-  elif len(grades) == 1:
-      grade = str(grades[0])+'학년'
-  # 전학년일 경우    
-  elif len(grades) == 4:
-      grade = '전학년'
-  # 2개 ~ 3개 학년일 경우
-  else:
-      grade = ''
-      for i in range(len(grades) - 1):
-        grade += str(grades[i])+','
-      grade += str(grades[len(grades) - 1])+'학년'
-  cur.execute("SELECT {} FROM s21_2 WHERE 수강대상 = '{}'".format(query_cols, grade))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_credit(data):
-  credits = data['credit']
-  # payload에 학점이 안담겼을 경우
-  if len(credits) == 0:
-    return 'error!'
-  elif len(credits) == 1:
-    credit = '학점 = '+str(credits[0])
-  elif len(credits) == 2:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])
-  else:
-    credit = '학점 = '+str(credits[0])+' OR 학점 = '+str(credits[1])+' OR 학점 = '+str(credits[2])
-  cur.execute("SELECT {} FROM s21_2 WHERE {}".format(query_cols, credit))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-
-def get_data_by_keyword(data):
-  option = data['option']
-  keyword = data['keyword']
-  if not option in ['과목명', '과목번호', '교수진', '강의실']:
-    return "error! option must be one of '과목명', '과목번호', '과목코드', '강의실'"
-  cur.execute("SELECT {} FROM s21_2 WHERE {} LIKE '%{}%'".format(query_cols, option, keyword))
-  res = []
-  for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
-  return res
-'''
 
 def set_department_query_string(department):
   return "department LIKE '%{}%'".format(department)
@@ -158,6 +65,7 @@ def set_credit_query_string(credits):
   return credit
 
 def set_grade_query_string(grades):
+  '''
   # 한 개 학년일 경우
   if len(grades) == 1:
       grade = '수강대상 = "'+str(grades[0])+'학년"'
@@ -170,6 +78,11 @@ def set_grade_query_string(grades):
       for i in range(len(grades) - 1):
         grade += str(grades[i])+','
       grade += str(grades[len(grades) - 1])+'학년"'
+  '''
+  grade = '수강대상 LIKE "%전%"'
+  
+  for i in range(len(grades)):
+    grade += ' or 수강대상 LIKE "%{}%"'.format(str(grades[i]))
   return grade
 
 def set_keyword_query_string(searchby, keyword):
@@ -213,7 +126,7 @@ def get_data_by_option(data):
       'message': 'payload 형식이 잘못되었습니다.'
   }
   
-  if year not in ['20', '21'] or semester not in ['1','2','s','w']:
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
     response_object = {
         'status': 'fail',
         'message': '잘못된 학년도와 학기 입니다.'
@@ -282,7 +195,7 @@ def get_data_by_option(data):
   return response_object
 
 def get_departments(year, semester):
-  if year not in ['20', '21'] or semester not in ['1','2','s','w']:
+  if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
     response_object = {
         'status': 'fail',
         'message': '잘못된 학년도와 학기 입니다.'
@@ -290,11 +203,9 @@ def get_departments(year, semester):
     return response_object, 403
   text_col = 's{}_{}_text'.format(year, semester)
   id_col = 's{}_{}_id'.format(year, semester)
-  #cur.execute("SELECT {}, {} FROM departments".format(text_col, id_col))
   cur = db.session.execute(text("SELECT {}, {} FROM departments".format(text_col, id_col)))
   res = []
   for elem in cur:
-      # res.append(dict(zip(zip_cols, elem)))
       if elem[0] != None:
         res.append({
           'text': elem[0],
