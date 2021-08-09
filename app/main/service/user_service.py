@@ -215,6 +215,7 @@ def report(sender,data,flag):
     else:
         newReport.useremail = None
     
+    db.session.add(newReport)
     db.session.commit()
     db.session.close()
     

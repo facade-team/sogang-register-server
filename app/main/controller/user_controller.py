@@ -104,10 +104,14 @@ class Report(Resource):
     @api.doc('문의하기')
     def post(self):
         '''Send report to facade team'''
-        auth_header = request.headers.get('Authorization')
-        res = Auth.middleware(data=auth_header)
         data = request.json
-        if res['status'] == 'success':
-            return report(res['email'],data,True)
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            res = Auth.middleware(data=auth_header)
+            data = request.json
+            if res['status'] == 'success':
+                return report(res['email'],data,True)
+            else:
+                return 'invalid token'
         else:
             return report(data['email'],data,False)

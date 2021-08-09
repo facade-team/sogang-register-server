@@ -10,7 +10,7 @@ from flask_script import Manager
 
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, user_subject, user_complete #model을 정의한 폴더 import
+from app.main.model import user, user_subject, user_complete, issue #model을 정의한 폴더 import
 #from app.main.model.subjects import t_departments, t_s20_1, t_s20_2, t_s20_s, t_s20_w, t_s21_1, t_s21_2, t_s21_s
 from app.main.model.subjects import t_departments, s18_1, s18_2, s18_s, s18_w, s19_1, s19_2, s19_s, s19_w, s20_1, s20_2, s20_s, s20_w, s21_1, s21_2, s21_s
 
