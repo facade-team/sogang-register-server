@@ -97,6 +97,7 @@ def set_credit_query_string(credits):
   return credit
 
 def set_grade_query_string(grades):
+  '''
   # 한 개 학년일 경우
   if len(grades) == 1:
       grade = '수강대상 = "'+str(grades[0])+'학년"'
@@ -109,6 +110,11 @@ def set_grade_query_string(grades):
       for i in range(len(grades) - 1):
         grade += str(grades[i])+','
       grade += str(grades[len(grades) - 1])+'학년"'
+  '''
+  grade = '수강대상 LIKE "%전%"'
+  
+  for i in range(len(grades)):
+    grade += ' or 수강대상 LIKE "%{}%"'.format(str(grades[i]))
   return grade
 
 def set_keyword_query_string(searchby, keyword):
