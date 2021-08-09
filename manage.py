@@ -12,6 +12,8 @@ from app.main import create_app, db
 from app.main.model import user, user_subject, user_complete #model을 정의한 폴더 import
 from app.main.model.subjects import t_departments, t_s20_1, t_s20_2, t_s20_s, t_s20_w, t_s21_1, t_s21_2, t_s21_s
 
+import ssl
+
 # 환경 변수에서 필요한 매개 변수를 사용하여 응용 프로그램 인스턴스를 생성 초기에 만들어진 기능 - dev, prod, test. 환경 변수에 아무것도 설정되지 않은 경우 기본값 dev이 사용됩니다.
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev') 
 
@@ -29,8 +31,9 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def run():
-    app.run(host='0.0.0.0')
-
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    ssl_context.load_cert_chain(certfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.crt', keyfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.key')
+    app.run(host='0.0.0.0', port=443, ssl_context = ssl_context)
 
 @manager.command
 def test():

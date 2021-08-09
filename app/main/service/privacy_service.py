@@ -1,5 +1,6 @@
 from main import db
 from main.model.user import User
+from main.model.user_subject import UserSubject
 import string, random
 
 from ..service.mailer_service import sendmail
@@ -124,6 +125,13 @@ def dropout(user_email,data):
             db.session.delete(user)
             db.session.commit()
             db.session.close()
+            
+            favorite = UserSubject.query.filter_by(email=user_email).all()
+            for i in favorite:
+                db.session.delete(i)
+                db.session.commit()
+                db.session.close()
+
             response_object = {
                 'status': 'success',
                 'message': '회원 탈퇴 되었습니다.'
