@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code, get_user,allow_email
+from ..service.user_service import save_new_user, verify_a_user, can_use,gen_secret_code, get_user,allow_email,report
 
 from app.main.service.auth_helper import Auth
 
@@ -14,6 +14,7 @@ _user = UserDto.user
 verify_model = UserDto.user_verify
 user_email = UserDto.user_email
 major_email = UserDto.major_email
+report_email = UserDto.report_email
 
 parser = api.parser()
 parser.add_argument('Authorization', location='headers')
@@ -94,3 +95,19 @@ class UserVerify(Resource):
         data = request.json
         # 넘기는 건 타겟 유저의 email 주소임
         return verify_a_user(data)
+
+@api.route('/reportemail')
+@api.expect(parser)
+class Report(Resource):
+    @api.expect(report_email, validate=True)
+    @api.response(201, '문의 내용 전송 완료')
+    @api.doc('문의하기')
+    def post(self):
+        '''Send report to facade team'''
+        auth_header = request.headers.get('Authorization')
+        res = Auth.middleware(data=auth_header)
+        data = request.json
+        if res['status'] == 'success':
+            return report(res['email'],data,True)
+        else:
+            return report(data['email'],data,False)

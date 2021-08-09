@@ -21,6 +21,11 @@ class UserDto:
         'major':  fields.List(fields.String(description='user major'),required=True),
         'allow_email': fields.Boolean(required=True, description='allow email alert or not')
     })
+    report_email = api.model('report_email', {
+        'email': fields.String(required=True, description='user email address'),
+        'title': fields.String(required=True, description='title'),
+        'script': fields.String(required=True, description='body'),
+    })
     
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')

@@ -1,10 +1,12 @@
 #user 모델에 관련된 쿼리문 작성 파일
 import uuid
 import datetime
+from sqlalchemy.orm import noload
 
 from sqlalchemy.sql.elements import Null
 from main import db
 from main.model.user import User
+from main.model.issue import Report
 
 from ..service.mailer_service import sendmail
 # email 형식 틀린 것 걸러내기
@@ -199,3 +201,25 @@ def get_user(email):
         }
         db.session.close()
         return response_object, 401
+
+def report(sender,data,flag):
+
+    newReport = Report(
+        email = data['email'],
+        title = data['title'],
+        script = data['script'],
+    )
+
+    if flag == True:
+        newReport.useremail = sender
+    else:
+        newReport.useremail = None
+    
+    db.session.commit()
+    db.session.close()
+    
+    response_object = {
+            'status': 'success',
+            'message': '문의가 접수되었습니다.'
+        }
+    return response_object, 201
