@@ -106,12 +106,12 @@ class Report(Resource):
         '''Send report to facade team'''
         data = request.json
         auth_header = request.headers.get('Authorization')
-        if auth_header:
+        try:
             res = Auth.middleware(data=auth_header)
             data = request.json
             if res['status'] == 'success':
                 return report(res['email'],data,True)
             else:
                 return 'invalid token'
-        else:
+        except Exception:
             return report(data['email'],data,False)
