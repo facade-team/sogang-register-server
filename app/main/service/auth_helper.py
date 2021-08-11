@@ -99,12 +99,12 @@ class Auth:
                     'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
                 }
                 db.session.close()
-                return response_object, 403
+                return response_object
         except Exception as e:
             response_object = {
                 'status' : 'error',
                 'message' : str(e)
             }
-            return response_object, 500
+            return response_object
         finally:
             db.session.close()

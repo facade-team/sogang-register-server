@@ -269,21 +269,19 @@ def report(sender,data,flag):
             email = data['email'],
             title = data['title'],
             script = data['script'],
+            useremail = None
         )
-
         if flag == True:
             newReport.useremail = sender
-        else:
-            newReport.useremail = None
         
         db.session.add(newReport)
         db.session.commit()
         db.session.close()
         
         response_object = {
-                'status': 'success',
-                'message': '문의가 접수되었습니다.'
-            }
+            'status': 'success',
+            'message': '문의가 접수되었습니다.'
+        }
         return response_object, 201
     except Exception as e:
         response_object = {
