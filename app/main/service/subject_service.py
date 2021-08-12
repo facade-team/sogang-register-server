@@ -216,16 +216,18 @@ def parsing(time_place):
   # 있을 경우 왼쪽 오른쪽 따로 저장
   # 없을 경우 , 기준으로 요일 저장 후 시간 저장
   time = time_place
+  day1 = ''
+  day2 = ''
+  time1 = ''
+  time2 = ''
+
+  if time == '\xa0':
+    return (day1,day2,time1,time2)
 
   if '[' in time_place:
     # 강의실 정보 있음
     i = time_place.rfind('[')
     time = time_place[:i]
-    
-  day1 = ''
-  day2 = ''
-  time1 = ''
-  time2 = ''
 
   if '/' in time:
     left = time.split('/')[0]
@@ -244,6 +246,7 @@ def parsing(time_place):
       time1 = time.split(' ')[1]
       result = (day1,day2,time1,time1)
     else:
+      print(time.split(' '))
       day1 = time.split(' ')[0]
       time1 = time.split(' ')[1]
       result = (day1,day1,time1,time1)
