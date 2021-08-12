@@ -1,6 +1,7 @@
 from app.main.model.user import User
 from app.main import db
 from app.main.service.user_service import get_user
+from app.main.service.user_subject_service import get_subjects
 
 class Auth:
     @staticmethod
@@ -15,11 +16,13 @@ class Auth:
                     if auth_token:
                         user_data=get_user(data['email'])[0]['data']
                         user_data['Authorization'] = auth_token
+                        user_favorite = get_subjects(data['email'])[0]['data']
 
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'data': user_data
+                            'data': user_data,
+                            'favorites':user_favorite
                         }
                         #user.decode_auth_token(auth_token)
                         db.session.close()

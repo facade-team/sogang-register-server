@@ -30,10 +30,11 @@ def get_subjects(user_email):
             # 배열로 먼저 가져온 다음 순차적으로 하나씩 뽑아서 response 완성하자
             res = []
             for i in user:
-                print(i.subject_id)
-                # 어떤 table에서 뽑을 건지 결정
+                # 어떤 table 결정
                 splitdata = i.subject_id.split('-')
-                target_table = 's' + splitdata[0] + '_' + splitdata[1]
+                #target_table = 's' + splitdata[0] + '_' + splitdata[1]
+                target_table = ('s%s_%s' % (splitdata[0], splitdata[1]))
+                
                 # 테이블에서 해당 id 조회
                 #cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
                 cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id = '{}';".format(query_cols, target_table, i.subject_id)))
@@ -41,7 +42,7 @@ def get_subjects(user_email):
                 for elem in cur:
                     res.append(dict(zip(zip_cols, elem)))
                 db.session.close()  # session close add
-            db.session.close()        
+            db.session.close()
             response_object = {
                 'status': 'success',
                 'message': '해당 유저의 즐겨찾기 목록 조회 완료',
@@ -51,7 +52,8 @@ def get_subjects(user_email):
         else:
             response_object = {
                 'status': 'success',
-                'message': '즐겨찾기에 아직 아무것도 등록 안됨'
+                'message': '즐겨찾기에 아직 아무것도 등록 안됨',
+                'data': None
             }
             return response_object, 202
     except Exception as e:

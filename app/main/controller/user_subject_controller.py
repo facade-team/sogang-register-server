@@ -19,7 +19,7 @@ class NewUser(Resource):
     @api.response(201, '해당 유저의 즐겨찾기 목록 조회 완료.')
     @api.response(202, '즐겨찾기에 아직 아무것도 등록 안됨')
     def get(self):
-        """Delete all favorite subject from table"""
+        """Get favorite subjects from table"""
         auth_header = request.headers.get('Authorization')
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
