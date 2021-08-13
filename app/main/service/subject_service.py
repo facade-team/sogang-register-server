@@ -7,27 +7,38 @@ zip_cols = (
   '학과',
   '강의계획서',
   '학점',
-  '요일',
-  '시작시간',
-  '종료시간',
   '강의실',
   '교수진',
   '수강대상',
   '과목설명',
   '비고',
   '대면여부',
-  '강의언어'
+  '강의언어',
+  '수업시간_강의실'
+)
+zip_res = (
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2',
 )
 
-query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, 시작시간, 종료시간, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어'
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실'
 
 
 def get_all_data():
     #cur.execute("SELECT {} FROM s21_2".format(query_cols))
     cur = db.session.execute(text("SELECT {} FROM s21_2;".format(query_cols)))
     res = []
+    temp = {}
+    test = {}
     for elem in cur:
-        res.append(dict(zip(zip_cols, elem)))
+      temp = dict(zip(zip_res,parsing(elem[-1])))
+      test = dict(zip(zip_cols, elem))
+      test.update(temp)
+
+      res.append(test)
+      #res.append(dict(zip(zip_cols, elem)))
     db.session.close()
     response_object = {
         'status': 'success',
@@ -48,7 +59,7 @@ def get_professors_list():
     for professor in unique_professor_list:
       if professor != "\xa0":
         res.append(dict(zip(['교수진'], [professor])))
-    print(len(res))
+    #print(len(res))
     db.session.close()
     return res
 
@@ -112,7 +123,7 @@ def check_keyword_form(searchby, keyword):
     return False
   return True
 
-def get_data_by_option(data):
+def get_data_by_option(data,flag):
   year = data['year']
   semester = data['semester']
   department = None
@@ -145,7 +156,7 @@ def get_data_by_option(data):
       credit = set_credit_query_string(credit)
   if 'grade' in data:
     grade = data['grade']
-    print(grade)
+    #print(grade)
     if not check_grade_form(grade):
       grade = None
       return error_response_object, 402
@@ -178,14 +189,38 @@ def get_data_by_option(data):
   
   if optionNumber == 0:
     query = ''
-  
-  print(query)
-  
+    
   #cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
-  cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 1:
+    cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 2:
+    cur = db.session.execute(text("SELECT {} FROM {}{} ORDER BY (CASE WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진".format(query_cols, tabale_name, query)))
+    
+  # select * from s21_2 ORDER BY (CASE 
+  # WHEN ASCII(SUBSTRING(교수진,1)) = "\xa0" THEN 3 
+  # WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진;
+
+  back = []
   res = []
+  temp = {}
+  test = {}
   for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
+    temp = dict(zip(zip_res,parsing(elem[-1])))
+    test = dict(zip(zip_cols, elem))
+    test.update(temp)
+    #res.append(dict(zip(zip_cols, elem)))
+    if flag == 1:
+      res.append(test)
+
+    if flag == 2:
+      if elem[6] == '\xa0':
+        back.append(test)
+      else:
+        res.append(test)
+  
+  if flag == 2:
+    res.extend(back)
+
   db.session.close()
   response_object = {
       'status': 'success',
@@ -193,6 +228,49 @@ def get_data_by_option(data):
       'data': res
   }
   return response_object
+
+def parsing(time_place):
+  # 강의실 뽑기
+  # / 있는지 확인
+  # 있을 경우 왼쪽 오른쪽 따로 저장
+  # 없을 경우 , 기준으로 요일 저장 후 시간 저장
+  time = time_place
+  day1 = ''
+  day2 = ''
+  time1 = ''
+  time2 = ''
+
+  if time == '\xa0':
+    return (day1,day2,time1,time2)
+
+  if '[' in time_place:
+    # 강의실 정보 있음
+    i = time_place.rfind('[')
+    time = time_place[:i]
+
+  if '/' in time:
+    left = time.split('/')[0]
+    right = time.split('/')[1]
+
+    day1 = left.split(' ')[0]
+    time1 = left.split(' ')[1]
+    day2 = right.split(' ')[1]
+    time2 = right.split(' ')[2]
+    result = (day1,day2,time1,time2)
+  else:
+    if ',' in time:
+      i = time.find(',')
+      day1 = time[0]
+      day2 = time[2]
+      time1 = time.split(' ')[1]
+      result = (day1,day2,time1,time1)
+    else:
+      #print(time.split(' '))
+      day1 = time.split(' ')[0]
+      time1 = time.split(' ')[1]
+      result = (day1,day1,time1,time1)
+
+  return result
 
 def get_departments(year, semester):
   if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):

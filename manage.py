@@ -34,9 +34,10 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 
 @manager.command
 def run():
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    ssl_context.load_cert_chain(certfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.crt', keyfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.key')
-    app.run(host='0.0.0.0', port=443, ssl_context = ssl_context)
+    # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    # ssl_context.load_cert_chain(certfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.crt', keyfile=os.path.dirname(os.path.realpath(__file__))+'/app/certificate/server.key')
+    # app.run(host='0.0.0.0', port=443, ssl_context = ssl_context)
+    app.run(host='0.0.0.0')
 
 @manager.command
 def test():
