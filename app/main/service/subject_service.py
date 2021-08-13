@@ -246,7 +246,7 @@ def parsing(time_place):
       time1 = time.split(' ')[1]
       result = (day1,day2,time1,time1)
     else:
-      print(time.split(' '))
+      #print(time.split(' '))
       day1 = time.split(' ')[0]
       time1 = time.split(' ')[1]
       result = (day1,day1,time1,time1)
