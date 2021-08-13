@@ -96,4 +96,4 @@ class Auth:
                 'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
             }
             db.session.close()
-            return response_object, 403
+            return response_object
