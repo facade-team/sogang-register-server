@@ -35,4 +35,13 @@ class Option(Resource):
   def post(self):
     """검색 옵션을 포함하여 개설교과먹 정보 조회"""
     data = request.json
-    return get_data_by_option(data)
+    return get_data_by_option(data,flag = 1)
+
+@api.route('/sort/prof')
+class Option(Resource):
+  @api.doc('검색 옵션을 포함하여 ㄱㄴㄷ순 교수 정렬')
+  @api.expect(_option, validate=True)
+  def post(self):
+    """검색 옵션을 포함하여 ㄱㄴㄷ순 교수 정렬"""
+    data = request.json
+    return get_data_by_option(data,flag = 2)

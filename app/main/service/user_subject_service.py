@@ -2,24 +2,29 @@ from main import db
 from main.model.user_subject import UserSubject
 from main.model.user import User
 from sqlalchemy.sql import text
+from main.service.subject_service import parsing
 
-query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, 시작시간, 종료시간, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어'
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실'
 zip_cols = (
   'subject_id',
   '과목명',
   '학과',
   '강의계획서',
   '학점',
-  '요일',
-  '시작시간',
-  '종료시간',
   '강의실',
   '교수진',
   '수강대상',
   '과목설명',
   '비고',
   '대면여부',
-  '강의언어'
+  '강의언어',
+  '수업시간_강의실'
+)
+zip_res = (
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2',
 )
 def get_subjects(user_email):
     try:
@@ -29,6 +34,8 @@ def get_subjects(user_email):
         if user:
             # 배열로 먼저 가져온 다음 순차적으로 하나씩 뽑아서 response 완성하자
             res = []
+            temp = {}
+            test = {}
             for i in user:
                 # 어떤 table 결정
                 splitdata = i.subject_id.split('-')
@@ -40,7 +47,10 @@ def get_subjects(user_email):
                 cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id = '{}';".format(query_cols, target_table, i.subject_id)))
                 # 리턴 오브젝트에 추가 후 한번에 리턴
                 for elem in cur:
-                    res.append(dict(zip(zip_cols, elem)))
+                    temp = dict(zip(zip_cols,parsing(elem[-1])))
+                    test = dict(zip(zip_cols, elem))
+                    test.update(temp)
+                    res.append(test)
                 db.session.close()  # session close add
             db.session.close()
             response_object = {

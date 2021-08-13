@@ -123,7 +123,7 @@ def check_keyword_form(searchby, keyword):
     return False
   return True
 
-def get_data_by_option(data):
+def get_data_by_option(data,flag):
   year = data['year']
   semester = data['semester']
   department = None
@@ -191,7 +191,16 @@ def get_data_by_option(data):
     query = ''
     
   #cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
-  cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 1:
+    cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 2:
+    cur = db.session.execute(text("SELECT {} FROM {}{} ORDER BY (CASE WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진".format(query_cols, tabale_name, query)))
+    
+  # select * from s21_2 ORDER BY (CASE 
+  # WHEN ASCII(SUBSTRING(교수진,1)) = "\xa0" THEN 3 
+  # WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진;
+
+  back = []
   res = []
   temp = {}
   test = {}
@@ -199,9 +208,19 @@ def get_data_by_option(data):
     temp = dict(zip(zip_res,parsing(elem[-1])))
     test = dict(zip(zip_cols, elem))
     test.update(temp)
-
     #res.append(dict(zip(zip_cols, elem)))
-    res.append(test)
+    if flag == 1:
+      res.append(test)
+
+    if flag == 2:
+      if elem[6] == '\xa0':
+        back.append(test)
+      else:
+        res.append(test)
+  
+  if flag == 2:
+    res.extend(back)
+
   db.session.close()
   response_object = {
       'status': 'success',
