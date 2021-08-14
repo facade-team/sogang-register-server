@@ -106,6 +106,27 @@ def check_department_form(department):
   return True
 '''
 
+def check_day_form(day):
+  if len(day) == 0:
+    return False
+  return True
+
+def set_day_query_string(days):
+  parse_day = '|'.join(days)
+  day = "요일1 REGEXP '{}' and 요일2 REGEXP '{}'".format(parse_day,parse_day)
+  return day
+  
+def check_time_form(time):
+  if len(time) == 2:
+    return True
+  else:
+    return False
+
+def set_time_query_string(times):
+#strcmp(시작시간1,'09:00') >= 0 and strcmp('10:15',종료시간1) >= 0 or strcmp(시작시간2,'09:00') >=0 and strcmp('10:15',종료시간2) >=0
+  time = "strcmp(시작시간1, '{}') >= 0 and strcmp('{}',종료시간1) >=0 and strcmp(시작시간2,'{}') >=0 and strcmp('{}',종료시간2) >= 0".format(times[0],times[1],times[0],times[1])
+  return time
+
 def check_credit_form(credits):
   if len(credits) == 0 or len(credits) > 3:
     return False
@@ -131,6 +152,8 @@ def get_data_by_option(data,flag):
   grade = None
   searchby = None
   keyword = None
+  day = None
+  time = None
   
   error_response_object = {
       'status': 'fail',
@@ -171,8 +194,22 @@ def get_data_by_option(data,flag):
       return error_response_object, 402
     else:
       searchby = set_keyword_query_string(searchby, keyword)
+  if 'day' in data:
+    day = data['day']
+    if not check_day_form(day):
+      day = None
+      return error_response_object, 402
+    else:
+      day = set_day_query_string(day)
+  if 'time' in data:
+    time = data['time']
+    if not check_time_form(time):
+      time = None
+      return error_response_object, 402
+    else:
+      time = set_time_query_string(time)
   
-  payloads = [department, credit, grade, searchby]
+  payloads = [department, credit, grade, searchby, day, time]
   tabale_name = 's{}_{}'.format(year, semester)
   
   # 옵션이 몇 개 인지 확인하여 query String 완성

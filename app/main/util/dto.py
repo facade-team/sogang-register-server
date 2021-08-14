@@ -89,4 +89,6 @@ class SubjectDto:
       'grade': fields.List(fields.Integer(required=False, description='학년(수강대상) (ex. [1], [1,2], [1,2,3,4], ...)')), # [0,1,2,3,4] # 0은 기타
       'searchby': fields.String(required=False, description='검색옵션 (ex. "과목명", "과목번호", "교수진", "강의실" 중 하나!)'), # '과목명' # ['과목명', '과목번호', '교수진', '강의실'] 중 하나
       'keyword': fields.String(required=False, description='검색어 (notice. searchby와 같이 넘겨줘야한다.)'), #'장형수'
+      'day': fields.List(fields.String(required=False, description='요일 (ex. ["월"], ["월","화"], ["화","수"], ...)')), # 해당 요일에 수업이 해당되기만 하면 무조건 출력. ex)수업이 월,수인 경우 "월" 만 넘겨줘도 출력.
+      'time': fields.List(fields.String(required=False, description='시간 (ex. ["09:00","11:45"], ["12:00","13:15"],...)')), # 해당 시간대에 수업이 포함되어 있으면 출력. 배열의 첫 번째 인자는 탐색할 조건의 시작시간, 두 번째 인자는 종료시간이다.
     })
