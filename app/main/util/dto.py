@@ -55,6 +55,12 @@ class JoinTable:
     subject = api.model('sub_id', {
         'sub_id': fields.List(fields.String(description='add and delete subject id in join table'), required=True),
     })
+    subject = api.model('sub_id', {
+        'sub_id': fields.List(fields.String(description='add and delete subject id in join table'), required=True),
+    })
+    sub = api.model('sub', {
+        'sub_id': fields.String(required=True,description='add and delete subject id in join table'),
+    })
 
 class Complete:
     api = Namespace('complete', description='Attended subjects in here')

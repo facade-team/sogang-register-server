@@ -154,3 +154,79 @@ def save_changes(data):
         return response_object, 500
     finally:
         db.session.close()
+
+def del_subject(user_email,data):
+    try:
+        # Join table에서 해당 유저의 해당 즐겨찾기 과목 전체 삭제
+        user = UserSubject.query.filter_by(email=user_email , subject_id=data['sub_id']).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            response_object = {
+                'status': 'success',
+                'message': '즐겨찾기에 등록된 해당 과목을 삭제했습니다.'
+            }
+            return response_object, 201
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': '즐겨찾기에 등록된 과목이 아닙니다.'
+            }
+            return response_object, 401
+    except Exception as e:
+        response_object = {
+            'status': 'error',
+            'message': str(e)
+        }
+        return response_object, 500
+    finally:
+        db.session.close()
+
+def add_subject(user_email, data):
+    # Join table에 해당 유저의 id + subject_id로 추가
+    # 존재하는 유저인지 검증
+    try:
+        user = User.query.filter_by(email=user_email).first()
+        if user.verify_on == True:
+            # 이미 같은 sub_id가 있다면 그냥 아무것도 안함
+            try:
+                if not UserSubject.query.filter_by(subject_id = data['sub_id']).first():
+                    new_favorite = UserSubject(
+                        email = user_email,
+                        subject_id = data['sub_id']
+                    )
+                    save_changes(new_favorite)
+                    response_object = {
+                        'status': 'success',
+                        'message': '해당 과목을 즐겨찾기에 추가하였습니다.'
+                    }
+                    return response_object, 201
+                else:
+                    response_object = {
+                        'status': 'fail',
+                        'message': '이미 즐겨찾기에 추가된 과목입니다.'
+                    }
+                    return response_object, 402
+            except Exception as e:
+                response_object = {
+                        'status': 'fail',
+                        'message': str(e)
+                    }
+                return response_object, 401
+            finally:
+                db.session.close()
+        else:
+            db.session.close()
+            response_object = {
+                'status': 'fail',
+                'message': '사용자의 이메일 인증이 완료되지 않았습니다.'
+            }
+            return response_object, 202
+    except Exception as e:
+        response_object = {
+            'status': 'error',
+            'message': str(e)
+        }
+        return response_object, 500
+    finally:
+        db.session.close()
