@@ -190,7 +190,7 @@ def add_subject(user_email, data):
         if user.verify_on == True:
             # 이미 같은 sub_id가 있다면 그냥 아무것도 안함
             try:
-                if not UserSubject.query.filter_by(subject_id = data['sub_id']).first():
+                if not UserSubject.query.filter_by(subject_id = data['sub_id'],email=user_email).first():
                     new_favorite = UserSubject(
                         email = user_email,
                         subject_id = data['sub_id']
