@@ -57,12 +57,11 @@ class User(db.Model):
         """
         try:
           temp = jwt.decode(auth_token,key,algorithm)
-        except jwt.ExpiredSignatureError:
-          return 'Signature expired. Please log in again.'
-        except jwt.InvalidTokenError:
-          return 'Invalid token. Please log in again.'
-        else:
           return temp
+        except jwt.ExpiredSignatureError:
+          return None
+        except jwt.InvalidTokenError:
+          return None
 
     def __repr__(self):
         return '<User %r>' % self.username

@@ -113,4 +113,4 @@ class Report(Resource):
             if res['status'] == 'success':
                 return report(res['email'],data,True)
             else:
-                return 'invalid token'
+                return res
