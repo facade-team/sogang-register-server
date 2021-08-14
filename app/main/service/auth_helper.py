@@ -63,10 +63,9 @@ class Auth:
                 db.session.close()
                 return response_object, 403
         except Exception as e:
-            print(str(e))
             response_object = {
                 'status': 'fail',
-                'message': 'Try again',
+                'message': str(e)
             }
             db.session.close()
             return response_object, 404
