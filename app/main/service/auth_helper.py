@@ -81,7 +81,7 @@ class Auth:
             if data:
                 auth_token = data
             else:
-                auth_token = ''
+                auth_token = None
             
             if auth_token:
                 # decode

@@ -30,7 +30,7 @@ class Users(Resource):
         if res['status'] == 'success':
             return get_user(res['email'])
         else:
-            return '유효하지 않은 토큰입니다.'
+            return res
 
 @api.route('/majoremail')
 @api.expect(parser)
@@ -45,6 +45,8 @@ class Users(Resource):
         if res['status'] == 'success':
             data = request.json
             return allow_email(res['email'],data = data)
+        else:
+            return res
 
 @api.route('/register')
 class NewUser(Resource):
@@ -113,4 +115,4 @@ class Report(Resource):
             if res['status'] == 'success':
                 return report(res['email'],data,True)
             else:
-                return 'invalid token'
+                return res

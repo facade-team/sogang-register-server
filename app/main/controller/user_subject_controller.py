@@ -24,6 +24,8 @@ class NewUser(Resource):
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
             return get_subjects(res['email'])
+        else:
+            return res
 
 
 @api.route('/update')
@@ -41,6 +43,8 @@ class NewUser(Resource):
         if res['status'] == 'success':
             data = request.json
             return add_subjects(res['email'],data)
+        else:
+            return res
 
 @api.route('/del')
 @api.expect(parser)
@@ -54,4 +58,6 @@ class NewUser(Resource):
         res = Auth.middleware(data=auth_header)
         if res['status'] == 'success':
             return del_subjects(res['email'])
+        else:
+            return res
 
