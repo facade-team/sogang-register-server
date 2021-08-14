@@ -300,7 +300,6 @@ def get_departments(year, semester):
 def get_updated_at():
     cur = db.session.execute(text("SELECT updated_at FROM s21_2 limit 1;"))
     for elem in cur:
-      print(elem)
       break;
     db.session.close()
     response_object = {
