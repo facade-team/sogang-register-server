@@ -63,10 +63,9 @@ class Auth:
                 db.session.close()
                 return response_object, 403
         except Exception as e:
-            print(str(e))
             response_object = {
                 'status': 'fail',
-                'message': 'Try again',
+                'message': str(e)
             }
             db.session.close()
             return response_object, 404
@@ -86,16 +85,32 @@ class Auth:
             if auth_token:
                 # decode
                 token = User.decode_auth_token(auth_token)
-                # decode 한 후 맞는 회원 정보인지 확인
-                user = User.query.filter_by(email=token['email']).first()
-                if user:
-                    response_object = {
-                            'status': 'success',
-                            'message': 'token 인증이 완료되었습니다.',
-                            'email': user.email
+                if token:
+                    # decode 한 후 맞는 회원 정보인지 확인
+                    user = User.query.filter_by(email=token['email']).first()
+                    if user:
+                        response_object = {
+                                'status': 'success',
+                                'message': 'token 인증이 완료되었습니다.',
+                                'email': user.email
+                            }
+                        db.session.close()
+                        return response_object
+                    else:
+                        response_object = {
+                          'status': 'fail',
+                          'message': 'User가 존재하지 않습니다. 다시 로그인 해 주세요.'
                         }
-                    db.session.close()
-                    return response_object
+                        db.session.close()
+                        return response_object
+                else:
+                  response_object = {
+                    'status': 'fail',
+                    'message': "'{}'은 유효하지 않은 토큰입니다. 다시 로그인 해 주세요.".format(auth_token)
+                  }
+                  db.session.close()
+                  return response_object
+                  
             else:
                 response_object = {
                     'status': 'fail',
