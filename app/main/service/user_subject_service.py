@@ -2,9 +2,8 @@ from main import db
 from main.model.user_subject import UserSubject
 from main.model.user import User
 from sqlalchemy.sql import text
-from main.service.subject_service import parsing
-
-query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실'
+#('21-2-ENG2001-01', '영문학개론', '영미어문전공', '조회', 3, '', '김희진', '전학년', '\xa0', '2021-2학기 신규강사 채용 예정', '비대면', '영어', '월,수 16:30~17:45')
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실, 요일1, 요일2, 시간1, 시간2'
 zip_cols = (
   'subject_id',
   '과목명',
@@ -18,8 +17,13 @@ zip_cols = (
   '비고',
   '대면여부',
   '강의언어',
-  '수업시간_강의실'
+  '수업시간_강의실',
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2'
 )
+
 zip_res = (
   '요일1',
   '요일2',
@@ -41,16 +45,15 @@ def get_subjects(user_email):
                 splitdata = i.subject_id.split('-')
                 #target_table = 's' + splitdata[0] + '_' + splitdata[1]
                 target_table = ('s%s_%s' % (splitdata[0], splitdata[1]))
-                
+
                 # 테이블에서 해당 id 조회
-                #cur.execute("SELECT {} FROM {} WHERE subject_id = '{}'".format(query_cols, target_table, i.subject_id))
-                cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id = '{}';".format(query_cols, target_table, i.subject_id)))
+                #cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+                cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id='{}'".format(query_cols, target_table, i.subject_id)))
                 # 리턴 오브젝트에 추가 후 한번에 리턴
+                print('hi')
                 for elem in cur:
-                    temp = dict(zip(zip_cols,parsing(elem[-1])))
-                    test = dict(zip(zip_cols, elem))
-                    test.update(temp)
-                    res.append(test)
+                    print(elem)
+                    res.append(dict(zip(zip_cols, elem)))
                 db.session.close()  # session close add
             db.session.close()
             response_object = {

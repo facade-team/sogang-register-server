@@ -14,7 +14,11 @@ zip_cols = (
   '비고',
   '대면여부',
   '강의언어',
-  '수업시간_강의실'
+  '수업시간_강의실',
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2'
 )
 zip_res = (
   '요일1',
@@ -23,22 +27,15 @@ zip_res = (
   '시간2',
 )
 
-query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실'
-
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실, 요일1, 요일2, 시간1, 시간2'
 
 def get_all_data():
     #cur.execute("SELECT {} FROM s21_2".format(query_cols))
     cur = db.session.execute(text("SELECT {} FROM s21_2;".format(query_cols)))
     res = []
-    temp = {}
-    test = {}
+    
     for elem in cur:
-      temp = dict(zip(zip_res,parsing(elem[-1])))
-      test = dict(zip(zip_cols, elem))
-      test.update(temp)
-
-      res.append(test)
-      #res.append(dict(zip(zip_cols, elem)))
+      res.append(dict(zip(zip_cols, elem)))
     db.session.close()
     response_object = {
         'status': 'success',
@@ -242,9 +239,7 @@ def get_data_by_option(data,flag):
   temp = {}
   test = {}
   for elem in cur:
-    temp = dict(zip(zip_res,parsing(elem[-1])))
     test = dict(zip(zip_cols, elem))
-    test.update(temp)
     #res.append(dict(zip(zip_cols, elem)))
     if flag == 1:
       res.append(test)
@@ -265,49 +260,6 @@ def get_data_by_option(data,flag):
       'data': res
   }
   return response_object
-
-def parsing(time_place):
-  # 강의실 뽑기
-  # / 있는지 확인
-  # 있을 경우 왼쪽 오른쪽 따로 저장
-  # 없을 경우 , 기준으로 요일 저장 후 시간 저장
-  time = time_place
-  day1 = ''
-  day2 = ''
-  time1 = ''
-  time2 = ''
-
-  if time == '\xa0':
-    return (day1,day2,time1,time2)
-
-  if '[' in time_place:
-    # 강의실 정보 있음
-    i = time_place.rfind('[')
-    time = time_place[:i]
-
-  if '/' in time:
-    left = time.split('/')[0]
-    right = time.split('/')[1]
-
-    day1 = left.split(' ')[0]
-    time1 = left.split(' ')[1]
-    day2 = right.split(' ')[1]
-    time2 = right.split(' ')[2]
-    result = (day1,day2,time1,time2)
-  else:
-    if ',' in time:
-      i = time.find(',')
-      day1 = time[0]
-      day2 = time[2]
-      time1 = time.split(' ')[1]
-      result = (day1,day2,time1,time1)
-    else:
-      #print(time.split(' '))
-      day1 = time.split(' ')[0]
-      time1 = time.split(' ')[1]
-      result = (day1,day1,time1,time1)
-
-  return result
 
 def get_departments(year, semester):
   if year not in ['18', '19', '20', '21'] or semester not in ['1','2','s','w'] or (year == '21' and semester == 'w'):
