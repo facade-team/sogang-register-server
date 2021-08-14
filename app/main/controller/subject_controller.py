@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Resource
 
 from ..util.dto import SubjectDto
-from ..service.subject_service import get_all_data, get_data_by_option, get_departments
+from ..service.subject_service import get_all_data, get_data_by_option, get_departments, get_updated_at
 
 api = SubjectDto.api
 _subject = SubjectDto.subject
@@ -45,3 +45,10 @@ class Option(Resource):
     """검색 옵션을 포함하여 ㄱㄴㄷ순 교수 정렬"""
     data = request.json
     return get_data_by_option(data,flag = 2)
+  
+@api.route('/updatedat')
+class Updatedat(Resource):
+  @api.doc('db 업데이트 시각을 조회')
+  def get(self):
+    """현db 업데이트 시각을 조회"""
+    return get_updated_at()

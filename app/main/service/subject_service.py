@@ -333,3 +333,15 @@ def get_departments(year, semester):
       'data': res
   }
   return response_object
+
+def get_updated_at():
+    cur = db.session.execute(text("SELECT updated_at FROM s21_2 limit 1;"))
+    for elem in cur:
+      break;
+    db.session.close()
+    response_object = {
+        'status': 'success',
+        'message': 'updated_at 조회에 성공하였습니다.',
+        'data': elem[0]
+    }
+    return response_object
