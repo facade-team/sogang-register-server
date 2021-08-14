@@ -50,10 +50,9 @@ def get_subjects(user_email):
                 #cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
                 cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id='{}'".format(query_cols, target_table, i.subject_id)))
                 # 리턴 오브젝트에 추가 후 한번에 리턴
-                print('hi')
                 for elem in cur:
-                    print(elem)
-                    res.append(dict(zip(zip_cols, elem)))
+                    if elem != None:
+                        res.append(dict(zip(zip_cols, elem)))
                 db.session.close()  # session close add
             db.session.close()
             response_object = {
