@@ -38,8 +38,6 @@ def get_subjects(user_email):
         if user:
             # 배열로 먼저 가져온 다음 순차적으로 하나씩 뽑아서 response 완성하자
             res = []
-            temp = {}
-            test = {}
             for i in user:
                 # 어떤 table 결정
                 splitdata = i.subject_id.split('-')
@@ -47,7 +45,6 @@ def get_subjects(user_email):
                 target_table = ('s%s_%s' % (splitdata[0], splitdata[1]))
 
                 # 테이블에서 해당 id 조회
-                #cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
                 cur = db.session.execute(text("SELECT {} FROM {} WHERE subject_id='{}'".format(query_cols, target_table, i.subject_id)))
                 # 리턴 오브젝트에 추가 후 한번에 리턴
                 for elem in cur:
