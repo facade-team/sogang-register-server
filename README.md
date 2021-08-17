@@ -1,4 +1,7 @@
 # 🏫 Sogang-Register Server
+
+<div><a href="http://sogang-sincheong.com/" target="_blank"> <img src="/Logo.png" alt="service-logo" width="200" height="200"/></a></div>
+
 서강대학교 개설교과목 정보 조회 서비스의 백엔드 서버 입니다.
 
 항상 시간표를 짜기 전, 수강신청을 하기 전 들어가는
@@ -98,11 +101,6 @@
     <td align = "center">BeautifulSoup</td>
   </tr>
 </tbody></table>
-
-- python
-- pandas
-- selenium
-- beautiful soup
 
 # 🔧 Proejct Setup / and Organization
 
@@ -221,5 +219,7 @@ docker run -dp 5000:5000 yourdockerusername/dockerfilename
 
 # 📞 Contact us
 > 김승우 : seungwookim99
+[📧 Email](sonicdx886@gmail.com)
 
 > 김현재 : itsnowkim
+[📧 Email](peterhyunjae@naver.com)
