@@ -228,4 +228,9 @@ docker run -dp 5000:5000 yourdockerusername/dockerfilename
 > </a>
 
 > 김현재 : itsnowkim
-[📧 Email](peterhyunjae@naver.com)
+> <a href='https://www.instagram.com/n0wkim/'>
+>   <img src="https://img.shields.io/badge/Instagram-E4405F?style=flat-square&logo=Instagram&logoColor=white&link=https://www.instagram.com/n0wkim/"/>
+> </a>
+> <a href='mailto:peterhyunjae@naver.com'>
+>   <img src="https://img.shields.io/badge/Gmail-d14836?style=flat-square&logo=Gmail&logoColor=white&link=peterhyunjae@naver.com"/>
+> </a>
