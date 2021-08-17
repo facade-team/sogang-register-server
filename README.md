@@ -1,7 +1,8 @@
 # 🏫 Sogang-Register Server
 
-<div><a href="http://sogang-sincheong.com/" target="_blank"> <img src="/Logo.png" alt="service-logo" width="200" height="200"/></a></div>
-
+<p align='center'>
+  <img align="center" src="/Logo.png" />
+</p>
 서강대학교 개설교과목 정보 조회 서비스의 백엔드 서버 입니다.
 
 항상 시간표를 짜기 전, 수강신청을 하기 전 들어가는
