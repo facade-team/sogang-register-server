@@ -30,7 +30,7 @@ class Users(Resource):
         if res['status'] == 'success':
             return get_user(res['email'])
         else:
-            return '유효하지 않은 토큰입니다.'
+            return res
 
 @api.route('/majoremail')
 @api.expect(parser)
@@ -45,6 +45,8 @@ class Users(Resource):
         if res['status'] == 'success':
             data = request.json
             return allow_email(res['email'],data = data)
+        else:
+            return res
 
 @api.route('/register')
 class NewUser(Resource):
@@ -106,12 +108,11 @@ class Report(Resource):
         '''Send report to facade team'''
         data = request.json
         auth_header = request.headers.get('Authorization')
-        if auth_header:
+        if auth_header == 'None' or auth_header == None or auth_header == 'null':
+            return report(data['email'],data,False)
+        else:
             res = Auth.middleware(data=auth_header)
-            data = request.json
             if res['status'] == 'success':
                 return report(res['email'],data,True)
             else:
-                return 'invalid token'
-        else:
-            return report(data['email'],data,False)
+                return res

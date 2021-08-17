@@ -55,6 +55,10 @@ class PasswordChange(Resource):
         if res['status'] == 'success':
             data = request.json
             return change_password(res['email'],data = data)
+        else:
+            return res
+
+
 
 @api.route('/dropout')
 @api.expect(parser)
@@ -72,3 +76,5 @@ class UserDropOut(Resource):
         if res['status'] == 'success':
             data = request.json
             return dropout(res['email'],data = data)
+        else:
+            return res

@@ -19,13 +19,14 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
     # SQLALCHEMY_POOL_SIZE 추가
-    app.config['SQLALCHEMY_POOL_SIZE'] = 20
-    app.config['SQLALCHEMY_POOL_RECYCLE'] = 3600
+    app.config['SQLALCHEMY_POOL_SIZE'] = 10
+    app.config['SQLALCHEMY_MAX_OVERFLOW'] = 10
+    app.config['SQLALCHEMY_POOL_RECYCLE'] = 30
     db.init_app(app)
     flask_bcrypt.init_app(app)
     #CORS(app)
-    #CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
-    CORS(app, resources={r'*': {'origins': '*'}})
+    CORS(app, resources={r'*': {'origins': 'http://sogang-sincheong.com/'}})
+    #CORS(app, resources={r'*': {'origins': '*'}})
 
 
     #mail 관련 config - main/config에 추가, mount

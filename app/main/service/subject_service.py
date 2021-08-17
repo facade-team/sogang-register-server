@@ -7,27 +7,35 @@ zip_cols = (
   '학과',
   '강의계획서',
   '학점',
-  '요일',
-  '시작시간',
-  '종료시간',
   '강의실',
   '교수진',
   '수강대상',
   '과목설명',
   '비고',
   '대면여부',
-  '강의언어'
+  '강의언어',
+  '수업시간_강의실',
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2'
+)
+zip_res = (
+  '요일1',
+  '요일2',
+  '시간1',
+  '시간2',
 )
 
-query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 요일, 시작시간, 종료시간, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어'
-
+query_cols = 'subject_id, 과목명, 학과, 강의계획서, 학점, 강의실, 교수진, 수강대상, 과목_설명, 비고, 대면여부, 강의언어, 수업시간_강의실, 요일1, 요일2, 시간1, 시간2'
 
 def get_all_data():
     #cur.execute("SELECT {} FROM s21_2".format(query_cols))
     cur = db.session.execute(text("SELECT {} FROM s21_2;".format(query_cols)))
     res = []
+    
     for elem in cur:
-        res.append(dict(zip(zip_cols, elem)))
+      res.append(dict(zip(zip_cols, elem)))
     db.session.close()
     response_object = {
         'status': 'success',
@@ -48,7 +56,7 @@ def get_professors_list():
     for professor in unique_professor_list:
       if professor != "\xa0":
         res.append(dict(zip(['교수진'], [professor])))
-    print(len(res))
+    #print(len(res))
     db.session.close()
     return res
 
@@ -95,6 +103,27 @@ def check_department_form(department):
   return True
 '''
 
+def check_day_form(day):
+  if len(day) == 0:
+    return False
+  return True
+
+def set_day_query_string(days):
+  parse_day = '|'.join(days)
+  day = "요일1 REGEXP '{}' and 요일2 REGEXP '{}'".format(parse_day,parse_day)
+  return day
+  
+def check_time_form(time):
+  if len(time) == 2:
+    return True
+  else:
+    return False
+
+def set_time_query_string(times):
+#strcmp(시작시간1,'09:00') >= 0 and strcmp('10:15',종료시간1) >= 0 or strcmp(시작시간2,'09:00') >=0 and strcmp('10:15',종료시간2) >=0
+  time = "strcmp(시작시간1, '{}') >= 0 and strcmp('{}',종료시간1) >=0 and strcmp(시작시간2,'{}') >=0 and strcmp('{}',종료시간2) >= 0".format(times[0],times[1],times[0],times[1])
+  return time
+
 def check_credit_form(credits):
   if len(credits) == 0 or len(credits) > 3:
     return False
@@ -112,7 +141,7 @@ def check_keyword_form(searchby, keyword):
     return False
   return True
 
-def get_data_by_option(data):
+def get_data_by_option(data,flag):
   year = data['year']
   semester = data['semester']
   department = None
@@ -120,6 +149,8 @@ def get_data_by_option(data):
   grade = None
   searchby = None
   keyword = None
+  day = None
+  time = None
   
   error_response_object = {
       'status': 'fail',
@@ -145,7 +176,7 @@ def get_data_by_option(data):
       credit = set_credit_query_string(credit)
   if 'grade' in data:
     grade = data['grade']
-    print(grade)
+    #print(grade)
     if not check_grade_form(grade):
       grade = None
       return error_response_object, 402
@@ -160,8 +191,22 @@ def get_data_by_option(data):
       return error_response_object, 402
     else:
       searchby = set_keyword_query_string(searchby, keyword)
+  if 'day' in data:
+    day = data['day']
+    if not check_day_form(day):
+      day = None
+      return error_response_object, 402
+    else:
+      day = set_day_query_string(day)
+  if 'time' in data:
+    time = data['time']
+    if not check_time_form(time):
+      time = None
+      return error_response_object, 402
+    else:
+      time = set_time_query_string(time)
   
-  payloads = [department, credit, grade, searchby]
+  payloads = [department, credit, grade, searchby, day, time]
   tabale_name = 's{}_{}'.format(year, semester)
   
   # 옵션이 몇 개 인지 확인하여 query String 완성
@@ -178,14 +223,36 @@ def get_data_by_option(data):
   
   if optionNumber == 0:
     query = ''
-  
-  print(query)
-  
+    
   #cur.execute("SELECT {} FROM {}{}".format(query_cols, tabale_name, query))
-  cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 1:
+    cur = db.session.execute(text("SELECT {} FROM {}{}".format(query_cols, tabale_name, query)))
+  if flag == 2:
+    cur = db.session.execute(text("SELECT {} FROM {}{} ORDER BY (CASE WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진".format(query_cols, tabale_name, query)))
+    
+  # select * from s21_2 ORDER BY (CASE 
+  # WHEN ASCII(SUBSTRING(교수진,1)) = "\xa0" THEN 3 
+  # WHEN ASCII(SUBSTRING(교수진,1)) < 128 THEN 2 ELSE 1 END), 교수진;
+
+  back = []
   res = []
+  temp = {}
+  test = {}
   for elem in cur:
-      res.append(dict(zip(zip_cols, elem)))
+    test = dict(zip(zip_cols, elem))
+    #res.append(dict(zip(zip_cols, elem)))
+    if flag == 1:
+      res.append(test)
+
+    if flag == 2:
+      if elem[6] == '\xa0':
+        back.append(test)
+      else:
+        res.append(test)
+  
+  if flag == 2:
+    res.extend(back)
+
   db.session.close()
   response_object = {
       'status': 'success',
@@ -218,3 +285,15 @@ def get_departments(year, semester):
       'data': res
   }
   return response_object
+
+def get_updated_at():
+    cur = db.session.execute(text("SELECT updated_at FROM s21_2 limit 1;"))
+    for elem in cur:
+      break;
+    db.session.close()
+    response_object = {
+        'status': 'success',
+        'message': 'updated_at 조회에 성공하였습니다.',
+        'data': elem[0]
+    }
+    return response_object

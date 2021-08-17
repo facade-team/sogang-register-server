@@ -1,6 +1,7 @@
 from app.main.model.user import User
 from app.main import db
 from app.main.service.user_service import get_user
+from app.main.service.user_subject_service import get_subjects
 
 class Auth:
     @staticmethod
@@ -15,11 +16,13 @@ class Auth:
                     if auth_token:
                         user_data=get_user(data['email'])[0]['data']
                         user_data['Authorization'] = auth_token
+                        user_favorite = get_subjects(data['email'])[0]['data']
 
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'data': user_data
+                            'data': user_data,
+                            'favorites':user_favorite
                         }
                         #user.decode_auth_token(auth_token)
                         db.session.close()
@@ -60,40 +63,66 @@ class Auth:
                 db.session.close()
                 return response_object, 403
         except Exception as e:
-            print(str(e))
             response_object = {
                 'status': 'fail',
-                'message': 'Try again',
+                'message': str(e)
             }
             db.session.close()
             return response_object, 404
+        finally:
+            db.session.close()
             
     # token 유효성 판단. decode -> exp, iat 확인 -> true, false 리턴
     @staticmethod
     def middleware(data):
-        # 로그인 안 한 상태에서 로그아웃 눌렀을 경우, auth_token은 ''
-        if data:
-            auth_token = data
-        else:
-            auth_token = ''
-        
-        if auth_token:
-            # decode
-            token = User.decode_auth_token(auth_token)
-            # decode 한 후 맞는 회원 정보인지 확인
-            user = User.query.filter_by(email=token['email']).first()
-            if user:
+        try:
+            # 로그인 안 한 상태에서 로그아웃 눌렀을 경우, auth_token은 ''
+            if data:
+                auth_token = data
+            else:
+                auth_token = None
+            
+            if auth_token:
+                # decode
+                token = User.decode_auth_token(auth_token)
+                if token:
+                    # decode 한 후 맞는 회원 정보인지 확인
+                    user = User.query.filter_by(email=token['email']).first()
+                    if user:
+                        response_object = {
+                                'status': 'success',
+                                'message': 'token 인증이 완료되었습니다.',
+                                'email': user.email
+                            }
+                        db.session.close()
+                        return response_object
+                    else:
+                        response_object = {
+                          'status': 'fail',
+                          'message': 'User가 존재하지 않습니다. 다시 로그인 해 주세요.'
+                        }
+                        db.session.close()
+                        return response_object
+                else:
+                  response_object = {
+                    'status': 'fail',
+                    'message': "'{}'은 유효하지 않은 토큰입니다. 다시 로그인 해 주세요.".format(auth_token)
+                  }
+                  db.session.close()
+                  return response_object
+                  
+            else:
                 response_object = {
-                        'status': 'success',
-                        'message': 'token 인증이 완료되었습니다.',
-                        'email': user.email
-                    }
+                    'status': 'fail',
+                    'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
+                }
                 db.session.close()
                 return response_object
-        else:
+        except Exception as e:
             response_object = {
-                'status': 'fail',
-                'message': 'Token이 존재하지 않습니다. 다시 로그인 해 주세요.'
+                'status' : 'error',
+                'message' : str(e)
             }
+            return response_object
+        finally:
             db.session.close()
-            return response_object, 403
