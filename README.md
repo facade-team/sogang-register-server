@@ -1,7 +1,7 @@
 # 🏫 Sogang-Register Server
 
-![서강신청로고](/Logo.png)
-[서강신청](http://sogang-sincheong.com/)
+[![서강신청](/Logo.png)](http://sogang-sincheong.com/)<br>
+
 [서강신청 블로그](https://sogang-sincheong.notion.site/sogang-sincheong/33a4fff98f414bbca2493ae77a962e6b)
 
 
