@@ -126,7 +126,7 @@ functional structure 구조를 사용하여 어떤 동작을 하는지에 따라
 │   │       └── __init__.py
 │   └── test
 │       └── __init__.py
-├─── manage.py
+├── manage.py
 └── requirements.txt
 ```
 
